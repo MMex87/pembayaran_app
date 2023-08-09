@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,10 @@ Route::post('kelas',[KelasController::class,'store']);
 Route::get('kelas/{id}',[KelasController::class,'show']);
 Route::get('kelas/{id}/edit',[KelasController::class,'edit']);
 Route::patch('kelas/{id}',[KelasController::class,'update']);
+
+// siswa
+Route::get('siswa',[SiswaController::class, 'index']);
+Route::get('siswa/create', [SiswaController::class, 'create']);
+Route::post('siswa',[SiswaController::class, 'store']);
+Route::get('siswa/{id}',[SiswaController::class, 'show']);
+Route::patch('siswa/{id}',[SiswaController::class,'update']);

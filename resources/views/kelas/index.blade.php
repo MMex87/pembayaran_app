@@ -13,11 +13,10 @@
                             <li class="breadcrumb-item active">Kelas</li>
                         </ol>
                     </nav>
-
                 </div>
                 <div class="col-6 d-flex justify-content-end">
                     <div class="col-6">
-                        <a href="/kelas/create" class="btn btn-success">Tambah Kelas <i class="bi bi-plus"></i></a>
+                        <a href="/kelas/create" class="btn btn-success">Tambah Kelas <i class="bi bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>

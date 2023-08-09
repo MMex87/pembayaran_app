@@ -9,11 +9,21 @@
             </a>
         </li><!-- End Dashboard Nav -->
 
+        <li class="nav-heading">Mastering</li>
+
         <li class="nav-item">
             <a class="nav-link {{ $judul == 'Kelas' ? '' : 'collapsed' }}" href="/kelas">
-                <i class="bi bi-menu-button-wide"></i><span>Kelas</span>
+                <i class="bi bi-house-door"></i><span>Kelas</span>
             </a>
         </li><!-- End Components Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ $judul == 'Siswa' ? '' : 'collapsed' }}" href="/siswa">
+                <i class="bi bi-person"></i><span>Siswa</span>
+            </a>
+        </li><!-- End Components Nav -->
+
+        <li class="nav-heading">Transaksi</li>
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
