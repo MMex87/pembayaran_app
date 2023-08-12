@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\TagihanController;
+use App\Http\Controllers\NamaTagihanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +37,14 @@ Route::get('siswa/create', [SiswaController::class, 'create']);
 Route::post('siswa',[SiswaController::class, 'store']);
 Route::get('siswa/{id}',[SiswaController::class, 'show']);
 Route::patch('siswa/{id}',[SiswaController::class,'update']);
+
+// tagihan
+Route::get('tagihan',[TagihanController::class, 'index']);
+Route::get('tagihan/create',[TagihanController::class, 'create']);
+
+// nama Tagihan
+Route::get('namaTagihan',[NamaTagihanController::class,'index']);
+Route::get('namaTagihan/create',[NamaTagihanController::class,'create']);
+Route::post('namaTagihan',[NamaTagihanController::class, 'store']);
+Route::patch('namaTagihan/{id}',[NamaTagihanController::class, 'update']);
+Route::delete('namaTagihan/{id}',[NamaTagihanController::class, 'destroy']);

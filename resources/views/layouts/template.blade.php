@@ -31,6 +31,9 @@
     <!-- Template Main CSS File -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet"">
 
+
+
+
     <!-- =======================================================
   * Template Name: NiceAdmin
   * Updated: May 30 2023 with Bootstrap v5.3.0
@@ -85,6 +88,11 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
+
+
+    <!-- Sebelum penutup </body> -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 
 </body>
 

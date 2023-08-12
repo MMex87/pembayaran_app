@@ -23,6 +23,12 @@
             </a>
         </li><!-- End Components Nav -->
 
+        <li class="nav-item">
+            <a class="nav-link {{ $judul == 'Tagihan' ? '' : 'collapsed' }}" href="/tagihan">
+                <i class="bi bi-file-text"></i><span>Tagihan</span>
+            </a>
+        </li><!-- End Components Nav -->
+
         <li class="nav-heading">Transaksi</li>
 
         <li class="nav-item">
