@@ -90,7 +90,18 @@
                                     <div class="col-lg-3 col-md-4 label">Nomor KIP</div>
                                     <div class="col-lg-9 col-md-8">{{ $siswa->noKIP }}</div>
                                 </div>
-
+                                <div class="d-flex justify-content-end">
+                                    <div class="row-2">
+                                        <form action="/siswa/{{ $siswa->idSiswa }}" method="POST"
+                                            id="formDelete{{ $siswa->idSiswa }}">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="btnHapus('{{ $siswa->idSiswa }}','{{ $siswa->namaSiswa }}')">Hapus
+                                                Siswa <i class="bi bi-trash-fill"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
@@ -128,8 +139,8 @@
                                         <label for="jenisKelamin" class="col-md-4 col-lg-3 col-form-label">Jenis
                                             Kelamin</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="jenisKelamin" type="text" class="form-control" id="jenisKelamin"
-                                                value="{{ $siswa->jenisKelamin }}">
+                                            <input name="jenisKelamin" type="text" class="form-control"
+                                                id="jenisKelamin" value="{{ $siswa->jenisKelamin }}">
                                         </div>
                                     </div>
 
@@ -145,6 +156,19 @@
                                         <div class="col-md-8 col-lg-9">
                                             <input name="noWali" type="text" class="form-control" id="noWali"
                                                 value="{{ $siswa->noHP }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="kelas" class="col-md-4 col-lg-3 col-form-label">Kelas</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="kelas" id="kelas" class="form-control">
+                                                @foreach ($kelas as $value)
+                                                    <option value="{{ $value->idkelas }}"
+                                                        selected="{{ $value->idKelas == $namaKelas ? 'selected' : '' }}">
+                                                        {{ $value->namaKelas }}</option>
+                                                @endForeach
+                                            </select>
                                         </div>
                                     </div>
 
@@ -167,7 +191,6 @@
                                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                                     </div>
                                 </form><!-- End Profile Edit Form -->
-
                             </div>
 
                             <div class="tab-pane fade pt-3" id="profile-settings">
@@ -260,4 +283,27 @@
             </div>
         </div>
     </section>
+
+    <script>
+        const btnHapus = (id, nama) => {
+            Swal.fire({
+                title: 'Apakah kamu yakin?',
+                text: `Kamu ingin menghapus data yang bernama ${nama}!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('formDelete' + id).submit()
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                }
+            })
+        }
+    </script>
 @endsection

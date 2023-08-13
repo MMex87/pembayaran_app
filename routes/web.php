@@ -37,6 +37,7 @@ Route::get('siswa/create', [SiswaController::class, 'create']);
 Route::post('siswa',[SiswaController::class, 'store']);
 Route::get('siswa/{id}',[SiswaController::class, 'show']);
 Route::patch('siswa/{id}',[SiswaController::class,'update']);
+Route::delete('siswa/{id}',[SiswaController::class,'destroy']);
 
 // tagihan
 Route::get('tagihan',[TagihanController::class, 'index']);

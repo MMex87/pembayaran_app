@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\SiswaPerKelas;
+use App\Models\TahunAjar;
 
 class SiswaController extends Controller
 {
@@ -15,7 +17,11 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        $siswa = Siswa::where('status','aktif')->paginate(10);
+        $siswa = SiswaPerKelas::with(['siswa', 'kelas'])
+                                ->join('siswa', 'siswa_per_kelas.idSiswa', '=', 'siswa.idSiswa')
+                                ->where('siswa.status', 'aktif')
+                                ->orderByDesc('siswa.idSiswa')
+                                ->paginate(10);
         $view_data=[
             'siswa' => $siswa
         ];
@@ -55,8 +61,8 @@ class SiswaController extends Controller
         $alamat = $request->input('alamat');
         $nomerWali = $request->input('noWali');
         $nomerKIP = $request->input('noKIP');
-
-        Siswa::create([
+        
+        $siswa = Siswa::create([
             'namaSiswa' => $namaSiswa,
             'tanggalLahir' => $tanggalLahir,
             'nik' => $nik,
@@ -68,6 +74,15 @@ class SiswaController extends Controller
             'namaWali' => $namaWali,
             'status' => 'aktif'
         ]);
+        
+        $tahunAjar = TahunAjar::orderByDESC('idTahunAjar')->first();
+
+        SiswaPerKelas::create([
+            'idSiswa' => $siswa->id,
+            'idTahunAjar' => $tahunAjar->idTahunAjar,
+            'idKelas' => $idKelas
+        ]);
+
 
         return redirect('siswa');
     }
@@ -82,9 +97,12 @@ class SiswaController extends Controller
     {
         $siswa = Siswa::where('idSiswa',$id)->first();
         $kelas = Kelas::where('idkelas',$siswa->idKelas)->first();
+        $data_kelas = Kelas::get();
+
         $view_data=[
             'siswa' => $siswa,
-            'namaKelas' => $kelas->namaKelas
+            'namaKelas' => $kelas->namaKelas,
+            'kelas' => $data_kelas,
         ];
         return view('siswa.detail',$view_data)->with('judul','Siswa');
     }
@@ -118,17 +136,26 @@ class SiswaController extends Controller
         $alamat = $request->input('alamat');
         $nomerWali = $request->input('noWali');
         $nomerKIP = $request->input('noKIP');
-
+        
+        $siswa = Siswa::where('idSiswa',$id)->first();
+        
         Siswa::where('idSiswa',$id)->update([
             'namaSiswa' => $namaSiswa,
             'tanggalLahir' => $tanggalLahir,
             'nik' => $nik,
             'jenisKelamin' => $jenisKelamin,
             'noHP' => $nomerWali,
+            'idKelas' => $idKelas,
             'alamat' => $alamat,
             'noKIP' => $nomerKIP,
             'namaWali' => $namaWali,
         ]);
+
+        if($idKelas != $siswa->idKelas){
+            SiswaPerKelas::where('idSiswa',$id)->update([
+                'idKelas' => $idKelas
+            ]);
+        }
 
         return redirect("/siswa/$id");
     }
@@ -141,6 +168,9 @@ class SiswaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Siswa::where('idSiswa',$id)->delete();
+        SiswaPerKelas::where('idSiswa',$id)->delete();
+
+        return redirect('siswa');
     }
 }
