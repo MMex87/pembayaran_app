@@ -40,17 +40,8 @@
                         <!-- Table with stripped rows -->
                         <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                             <div class="datatable-top">
-                                <div class="datatable-dropdown">
-                                    <label>
-                                        <select class="datatable-selector">
-                                            <option value="5">5</option>
-                                            <option value="10" selected="">10</option>
-                                            <option value="15">15</option>
-                                            <option value="20">20</option>
-                                            <option value="25">25</option>
-                                        </select> entries per page
-                                    </label>
-                                </div>
+                                <a href="/siswa/create" class="btn btn-success">Tambah Siswa <i
+                                        class="bi bi-plus-lg"></i></a>
                                 <div class="datatable-search">
                                     <input class="datatable-input" placeholder="Search..." type="search"
                                         title="Search within table">
@@ -60,62 +51,35 @@
                                 <table class="table datatable datatable-table">
                                     <thead>
                                         <tr>
-                                            <th data-sortable="true" style="width: 5.691964285714286%;"><a href="#"
-                                                    class="datatable-sorter">#</a></th>
-                                            <th data-sortable="true" style="width: 28.013392857142854%;"><a href="#"
-                                                    class="datatable-sorter">Name</a></th>
-                                            <th data-sortable="true" style="width: 37.723214285714285%;"><a href="#"
-                                                    class="datatable-sorter">Position</a></th>
-                                            <th data-sortable="true" style="width: 9.263392857142858%;"><a href="#"
-                                                    class="datatable-sorter">Age</a></th>
-                                            <th data-sortable="true" style="width: 19.308035714285715%;"><a href="#"
-                                                    class="datatable-sorter">Start Date</a></th>
+                                            <th data-sortable="true" style="width: 5%;">#</th>
+                                            <th data-sortable="true" style="width: 20%;">Nama</th>
+                                            <th data-sortable="true" style="width: 20%;">NIK</th>
+                                            <th data-sortable="true" style="width: 10%;">Jenis Kelamin</th>
+                                            <th data-sortable="true" style="width: 15%;">Kelas</th>
+                                            <th data-sortable="true" style="width: 20%;">Nama Wali</th>
+                                            <th data-sortable="true" style="width: 10%;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-index="0">
-                                            <td>1</td>
-                                            <td>Brandon Jacob</td>
-                                            <td>Designer</td>
-                                            <td>28</td>
-                                            <td>2016-05-25</td>
-                                        </tr>
-                                        <tr data-index="1">
-                                            <td>2</td>
-                                            <td>Bridie Kessler</td>
-                                            <td>Developer</td>
-                                            <td>35</td>
-                                            <td>2014-12-05</td>
-                                        </tr>
-                                        <tr data-index="2">
-                                            <td>3</td>
-                                            <td>Ashleigh Langosh</td>
-                                            <td>Finance</td>
-                                            <td>45</td>
-                                            <td>2011-08-12</td>
-                                        </tr>
-                                        <tr data-index="3">
-                                            <td>4</td>
-                                            <td>Angus Grady</td>
-                                            <td>HR</td>
-                                            <td>34</td>
-                                            <td>2012-06-11</td>
-                                        </tr>
-                                        <tr data-index="4">
-                                            <td>5</td>
-                                            <td>Raheem Lehner</td>
-                                            <td>Dynamic Division Officer</td>
-                                            <td>47</td>
-                                            <td>2011-04-19</td>
-                                        </tr>
+                                        @php($index = 1)
+                                        @foreach ($siswa as $value)
+                                            <tr data-index="{{ $index }}">
+                                                <td>{{ $index }}</td>
+                                                <td>{{ $value->namaSiswa }}</td>
+                                                <td>{{ $value->nik }}</td>
+                                                <td>{{ $value->jenisKelamin }}</td>
+                                                <td>{{ $value->kelas->namaKelas }}</td>
+                                                <td>{{ $value->namaWali }}</td>
+                                                <td><a href="/siswa/{{ $value->idSiswa }}"
+                                                        class="btn btn-primary">Detail</a></td>
+                                            </tr>
+                                            @php($index++)
+                                        @endForeach
                                     </tbody>
                                 </table>
                             </div>
                             <div class="datatable-bottom">
-                                <div class="datatable-info">Showing 1 to 5 of 5 entries</div>
-                                <nav class="datatable-pagination">
-                                    <ul class="datatable-pagination-list"></ul>
-                                </nav>
+                                {{ $siswa->links('vendor.pagination.bootstrap-5') }}
                             </div>
                         </div>
                         <!-- End Table with stripped rows -->

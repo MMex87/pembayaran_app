@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kelas;
+use App\Models\Siswa;
 
 class KelasController extends Controller
 {
@@ -14,7 +15,7 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $kelas = Kelas::get();
+        $kelas = Kelas::orderBy('namaKelas','ASC')->get();
 
 
         $view_data = [
@@ -51,7 +52,7 @@ class KelasController extends Controller
         Kelas::create([
             'namaKelas' => $namaKelas,
             'waliKelas' => $waliKelas,
-            'emailWaliKelas' => $email
+            'emailWaliKelas' => $email,
         ]);
 
         return redirect('kelas');
@@ -67,11 +68,17 @@ class KelasController extends Controller
     {
         $kelas = Kelas::where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
 
+        
+        $siswa = Siswa::where([
+                'status'=>'aktif',
+                'idKelas' => $kelas->idkelas
+            ])->orderBy('namaSiswa','ASC')->paginate(10);
 
         $judul = "Kelas";
         
         $view_data=[
-            'kelas' => $kelas
+            'kelas' => $kelas,
+            'siswa' => $siswa
         ];
         
         return view('kelas.show',$view_data)->with('judul',$judul);

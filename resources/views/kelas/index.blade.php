@@ -25,7 +25,7 @@
     <div class="row">
         {{-- @php(dd($kelas)) --}}
         @foreach ($kelas as $value)
-            <div class="col-3">
+            <div class="col-6">
                 <!-- Default Card -->
                 <div class="card" onclick="detail({{ $value->idkelas }})" style="cursor: pointer">
                     <div class="card-body">

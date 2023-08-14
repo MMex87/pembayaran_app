@@ -158,14 +158,13 @@
                                                 value="{{ $siswa->noHP }}">
                                         </div>
                                     </div>
-
                                     <div class="row mb-3">
                                         <label for="kelas" class="col-md-4 col-lg-3 col-form-label">Kelas</label>
                                         <div class="col-md-8 col-lg-9">
                                             <select name="kelas" id="kelas" class="form-control">
                                                 @foreach ($kelas as $value)
                                                     <option value="{{ $value->idkelas }}"
-                                                        selected="{{ $value->idKelas == $namaKelas ? 'selected' : '' }}">
+                                                        {{ $value->namaKelas == $namaKelas ? 'selected' : '' }}>
                                                         {{ $value->namaKelas }}</option>
                                                 @endForeach
                                             </select>

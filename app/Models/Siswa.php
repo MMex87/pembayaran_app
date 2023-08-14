@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Kelas;
 
 class Siswa extends Model
 {
@@ -23,6 +24,11 @@ class Siswa extends Model
             'namaWali',
             'status'
     ];
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'idKelas','idkelas');
+    }
 
     public $timestamps = false;
     protected $table = 'siswa';
