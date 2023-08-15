@@ -42,6 +42,7 @@ Route::delete('siswa/{id}',[SiswaController::class,'destroy']);
 // tagihan
 Route::get('tagihan',[TagihanController::class, 'index']);
 Route::get('tagihan/create',[TagihanController::class, 'create']);
+Route::post('tagihan',[TagihanController::class, 'store']);
 
 // nama Tagihan
 Route::get('namaTagihan',[NamaTagihanController::class,'index']);

@@ -13,6 +13,14 @@ class Tagihan extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $fillable =[
+        'idNamaTagihan',
+        'tanggalMulai',
+        'tanggalSelesai',
+        'status',
+        'kelas'
+    ];
+
     public function namaTagihan(): HasMany
     {
         return $this->hasMany(NamaTagihan::class,'idNamaTagihan','idNamaTagihan');

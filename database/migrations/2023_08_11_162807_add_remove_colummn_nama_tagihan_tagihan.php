@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('nama_tagihan', function (Blueprint $table){
-            $table->dropColumn(['tanggalMulai','tanggalSelesai']);
-        });
+        // Schema::table('nama_tagihan', function (Blueprint $table){
+        //     $table->dropColumn(['tanggalMulai','tanggalSelesai']);
+        // });
         Schema::table('tagihan', function (Blueprint $table) {
-            $table->date('tanggalMulai')->after('noTagihan');
-            $table->date('tanggalSelesai')->after('noTagihan');
+            $table->date('tanggalMulai')->after('idNamaTagihan');
+            $table->date('tanggalSelesai')->after('idNamaTagihan');
         });
     }
 
@@ -29,12 +29,12 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tagihan', function (Blueprint $table){
-            $table->dropColumn(['tanggalMulai','tanggalSelesai']);
-        });
-        Schema::table('nama_tagihan', function (Blueprint $table) {
-            $table->date('tanggalMulai')->after('namaTagihan');
-            $table->date('tanggalSelesai')->after('namaTagihan');
-        });
+        // Schema::table('tagihan', function (Blueprint $table){
+        //     $table->dropColumn(['tanggalMulai','tanggalSelesai']);
+        // });
+        // Schema::table('nama_tagihan', function (Blueprint $table) {
+        //     $table->date('tanggalMulai')->after('namaTagihan');
+        //     $table->date('tanggalSelesai')->after('namaTagihan');
+        // });
     }
 };
