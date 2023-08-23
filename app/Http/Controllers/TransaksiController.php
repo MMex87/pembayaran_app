@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SiswaPerKelas;
-use App\Models\Siswa;
+use App\Models\Transaksi;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
-class SiswaPerKelasController extends Controller
+class TransaksiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,15 @@ class SiswaPerKelasController extends Controller
      */
     public function index()
     {
-        //
+        $date = date('YmdHis');
+        $kelas = Kelas::orderBy('namaKelas','ASC')->get();
+        $faktur = 'FKT'.$date;
+        $view_data=[
+            'kelas' => $kelas,
+            'faktur' => $faktur
+        ];
+        
+        return view('transaksi.index',$view_data)->with('judul','Pembayaran');
     }
 
     /**
@@ -43,10 +51,10 @@ class SiswaPerKelasController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\siswaPerKelas  $siswaPerKelas
+     * @param  \App\Models\Transaksi  $transaksi
      * @return \Illuminate\Http\Response
      */
-    public function show(siswaPerKelas $siswaPerKelas)
+    public function show(Transaksi $transaksi)
     {
         //
     }
@@ -54,10 +62,10 @@ class SiswaPerKelasController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\siswaPerKelas  $siswaPerKelas
+     * @param  \App\Models\Transaksi  $transaksi
      * @return \Illuminate\Http\Response
      */
-    public function edit(siswaPerKelas $siswaPerKelas)
+    public function edit(Transaksi $transaksi)
     {
         //
     }
@@ -66,10 +74,10 @@ class SiswaPerKelasController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\siswaPerKelas  $siswaPerKelas
+     * @param  \App\Models\Transaksi  $transaksi
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, siswaPerKelas $siswaPerKelas)
+    public function update(Request $request, Transaksi $transaksi)
     {
         //
     }
@@ -77,28 +85,11 @@ class SiswaPerKelasController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\siswaPerKelas  $siswaPerKelas
+     * @param  \App\Models\Transaksi  $transaksi
      * @return \Illuminate\Http\Response
      */
-    public function destroy(siswaPerKelas $siswaPerKelas)
+    public function destroy(Transaksi $transaksi)
     {
         //
-    }
-
-    public function getSiswa(Request $request)
-    {
-        $idKelas = $request->idKelas;
-        $namaSiswa = $request->namaSiswa;
-
-        // Lakukan pencarian data siswa sesuai dengan $namaSiswa
-        $siswaPerKelas = SiswaPerKelas::where('idKelas', $idKelas)->get();
-
-        $siswaIds = $siswaPerKelas->pluck('idSiswa');
-
-        $siswa = Siswa::whereIn('idSiswa', $siswaIds)
-            ->where('namaSiswa', 'LIKE', '%' . $namaSiswa . '%')
-            ->get();
-
-        return response()->json($siswa);
     }
 }

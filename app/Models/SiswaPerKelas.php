@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\TagihanPerSiswa;
 
 class SiswaPerKelas extends Model
 {
@@ -29,15 +30,10 @@ class SiswaPerKelas extends Model
         return $this->belongsTo(Kelas::class, 'idKelas','idkelas');
     }
 
-    // public function siswa()
-    // {
-    //     return $this->belongsTo(Siswa::class, 'idSiswa','idSiswa');
-    // }
-
-    // public function kelas()
-    // {
-    //     return $this->belongsTo(Kelas::class, 'idKelas','idkelas');
-    // }
+    public function tagihanPerSiswa()
+    {
+        return $this->hasMany(TagihanPerSiswa::class, 'idTPS','idTPS');
+    }
 
     public $timestamps = false;
 }

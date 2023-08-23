@@ -27,9 +27,15 @@ class Siswa extends Model
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class, 'idKelas','idkelas');
+        return $this->belongsToMany(Kelas::class, 'siswa_per_kelas', 'idSiswa', 'idkelas');
+    }
+    
+    public function siswaPerKelas()
+    {
+        return $this->hasMany(SiswaPerKelas::class, 'idSiswa');
     }
 
+    
     public $timestamps = false;
     protected $table = 'siswa';
 }

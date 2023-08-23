@@ -20,7 +20,7 @@ class TagihanController extends Controller
     {
         $tagihan = Tagihan::with('namaTagihan')->paginate(5);
         $data_view=[
-          'tagihan' => $tagihan  
+            'tagihan' => $tagihan  
         ];
         
         return view('tagihan.index',$data_view)->with('judul','Tagihan');
@@ -191,5 +191,41 @@ class TagihanController extends Controller
     public function destroy(Tagihan $tagihan)
     {
         //
+    }
+
+    public function getTagihan(Request $request)
+    {
+        $idSiswa = $request->idSiswa;
+        $idKelas = $request->idKelas;
+
+        // $idSiswa = Siswa::where(['idSiswa'=> $idSiswa,'idKelas' => $idKelas])->first();
+        
+        $idSPK = SiswaPerKelas::where([
+                                    'idSiswa' => $idSiswa,
+                                    'idKelas' => $idKelas
+                                    ])->first();
+
+        
+        $tagihanPerSiswa = TagihanPerSiswa::where([
+                                                'idSPK' => $idSPK->idSPK,
+                                                'status' => 'Belum Lunas'
+                                                ])->get();
+        
+        $idTagihans = $tagihanPerSiswa->pluck('idTagihan');
+        
+        $tagihan = Tagihan::with('namaTagihan')
+                            ->whereIn('idTagihan',$idTagihans)
+                            ->get();
+                            
+        return response()->json($tagihan);
+    }
+
+    public function getTotalTagihan(Request $request)
+    {
+        $idTagihan = $request->idTagihan;
+
+        $tagihan = Tagihan::where('idTagihan', $idTagihan)
+                            ->first();
+        return response()->json($tagihan);
     }
 }

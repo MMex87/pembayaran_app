@@ -17,5 +17,10 @@ class Kelas extends Model
         'emailWaliKelas'
     ];
 
+    public function siswa()
+    {
+        return $this->belongsToMany(Siswa::class, 'siswa_per_kelas', 'kelas_id', 'siswa_id');
+    }
+
     public $timestamps = false;
 }
