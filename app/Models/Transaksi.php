@@ -11,7 +11,7 @@ class Transaksi extends Model
     use HasFactory;
     use SoftDeletes;
 
-    $fillable = [
+    public $fillable = [
         'faktur',
         'verify',
         'idTagihan'

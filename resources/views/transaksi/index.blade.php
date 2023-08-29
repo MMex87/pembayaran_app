@@ -51,7 +51,7 @@
                         <div class="col-md-12">
                             <label for="faktur" class="form-label">Faktur</label>
                             <input type="text" class="form-control" id="faktur" name="faktur"
-                                value="{{ $faktur }}" disabled>
+                                value="{{ $faktur }}" readonly>
                         </div>
                         <div class="col-md-6">
                             <label for="kelas" class="form-label">Kelas</label>
@@ -205,6 +205,18 @@
             })
         });
     </script>
+
+    @if (Session::has('success'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ Session::get('success') }}',
+                    icon: 'success'
+                });
+            });
+        </script>
+    @endif
 
 
 @endsection

@@ -61,3 +61,4 @@ Route::delete('namaTagihan/{id}',[NamaTagihanController::class, 'destroy']);
 
 // Pembayaran
 Route::get('pembayaran',[TransaksiController::class, 'index']);
+Route::post('transaksi', [TransaksiController::class, 'store']);

@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaksi;
 use App\Models\Kelas;
+use App\Models\Siswa;
+use App\Models\TagihanPerSiswa;
+use App\Models\SiswaPerKelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Session;
+use Alert;
 
 class TransaksiController extends Controller
 {
@@ -16,7 +21,7 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        $date = date('YmdHis');
+        $date = date('mYdiHs');
         $kelas = Kelas::orderBy('namaKelas','ASC')->get();
         $faktur = 'FKT'.$date;
         $view_data=[
@@ -45,7 +50,39 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $faktur = $request->input('faktur');
+        $idKelas = $request->input('kelas');
+        $namaSiswa = $request->input('siswa');
+        $idTagihan = $request->input('namaTagihan');
+        
+        $siswa = Siswa::where([
+                            'idKelas' => $idKelas,
+                            'namaSiswa' => $namaSiswa
+                        ])->first();
+        $idSiswa = $siswa->idSiswa;
+
+        $spk = SiswaPerKelas::where([
+                                'idSiswa' => $idSiswa,
+                                'idKelas' => $idKelas
+                            ])->first();
+
+        Transaksi::create([
+            'faktur' => $faktur,
+            'verify' => 'Belum Verify',
+            'idTagihan' => $idTagihan
+        ]);
+
+
+        TagihanPerSiswa::where([
+                            'idSPK' => $spk->idSPK,
+                            'idTagihan' =>$idTagihan
+                        ])->update([
+                            'status' => 'Lunas'
+                        ]);
+
+        
+        Session::flash('success', 'Pembayaran berhasil');
+        return redirect('pembayaran');
     }
 
     /**
