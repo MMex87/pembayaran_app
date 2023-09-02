@@ -16,15 +16,15 @@ return new class extends Migration
         // create table
         Schema::create('tagihan', function (Blueprint $table) {
             $table->id('idTagihan');
-            $table->string('noTagihan');
+            $table->string('kelas');
+            $table->integer('hargaBayar');
+            $table->date('tanggalMulai');
+            $table->date('tanggalSelesai');
             $table->string('status');
+            $table->softDeletes();
             // relasi ke nama tagihan
             $table->unsignedBigInteger('idNamaTagihan');
             $table->foreign('idNamaTagihan')->references('idNamaTagihan')->on('nama_tagihan');
-
-            // relasi ke siswa per kelas
-            $table->unsignedBigInteger('idSPK');
-            $table->foreign('idSPK')->references('idSPK')->on('siswa_per_kelas');
 
             $table->timestamps();
         });

@@ -163,7 +163,7 @@
                                         <div class="col-md-8 col-lg-9">
                                             <select name="kelas" id="kelas" class="form-control">
                                                 @foreach ($kelas as $value)
-                                                    <option value="{{ $value->idkelas }}"
+                                                    <option value="{{ $value->idKelas }}"
                                                         {{ $value->namaKelas == $namaKelas ? 'selected' : '' }}>
                                                         {{ $value->namaKelas }}</option>
                                                 @endForeach

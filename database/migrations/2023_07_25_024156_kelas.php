@@ -15,10 +15,11 @@ return new class extends Migration
     {
         // create table
         Schema::create('kelas', function (Blueprint $table) {
-            $table->id('idkelas');
+            $table->id('idKelas');
             $table->string('emailWaliKelas');
             $table->string('waliKelas');
             $table->string('namaKelas');
+            $table->softDeletes();
         });
     }
 

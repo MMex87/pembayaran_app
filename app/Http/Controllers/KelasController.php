@@ -67,15 +67,16 @@ class KelasController extends Controller
     public function show($id)
     {
         $kelas = Kelas::where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
-
         
-        $siswa = Siswa::where([
+        $siswa = Siswa::with('kelas')->where([
                 'status'=>'aktif',
-                'idKelas' => $kelas->idkelas
+                'idKelas' => $kelas->idKelas
             ])->orderBy('namaSiswa','ASC')->paginate(10);
 
         $judul = "Kelas";
-        
+
+        // dd($siswa);
+
         $view_data=[
             'kelas' => $kelas,
             'siswa' => $siswa
@@ -92,7 +93,7 @@ class KelasController extends Controller
      */
     public function edit($id)
     {
-        $kelas = Kelas::where('idkelas',$id)->first();
+        $kelas = Kelas::where('idKelas',$id)->first();
 
         $judul = 'Kelas';
 
@@ -116,7 +117,7 @@ class KelasController extends Controller
         $waliKelas = $request->input('waliKelas');
         $email = $request->input('emailWaliKelas');
 
-        Kelas::where('idkelas',$id)
+        Kelas::where('idKelas',$id)
             ->update([
                 'namaKelas' => $nama,
                 'waliKelas' => $waliKelas,

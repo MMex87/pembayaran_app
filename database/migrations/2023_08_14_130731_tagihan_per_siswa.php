@@ -38,12 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        // Schema::table('tagihan_per_siswa', function (Blueprint $table) {
-            
-        //     $table->dropForeign(['idSPK','idTagihan']);
-        //     $table->dropColumn('idSPK');
-        //     $table->dropColumn('idTagihan');
-        // });
         Schema::drop('tagihan_per_siswa');
     }
 };

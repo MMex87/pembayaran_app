@@ -17,10 +17,14 @@ return new class extends Migration
         Schema::create('siswa', function (Blueprint $table) {
             $table->id('idSiswa');
             $table->string('namaSiswa');
-            $table->string('nisn');
-            $table->string('nis');
-            $table->string('email');
+            $table->string('nik');
+            $table->string('jenisKelamin');
+            $table->string('noHP');
             $table->string('alamat');
+            $table->string('status');
+            $table->string('noKIP');
+            $table->string('namaWali');
+            $table->softDeletes();
 
             // relasi table kelas
             $table->unsignedBigInteger('idKelas');

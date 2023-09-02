@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Kelas;
+use App\Models\SiswaPerKelas;
 
 class Siswa extends Model
 {
@@ -25,9 +26,10 @@ class Siswa extends Model
             'status'
     ];
 
+
     public function kelas()
     {
-        return $this->belongsToMany(Kelas::class, 'siswa_per_kelas', 'idSiswa', 'idkelas');
+        return $this->belongsToMany(Kelas::class, 'siswa_per_kelas', 'idSiswa', 'idKelas');
     }
     
     public function siswaPerKelas()
@@ -35,7 +37,7 @@ class Siswa extends Model
         return $this->hasMany(SiswaPerKelas::class, 'idSiswa');
     }
 
-    
+    protected $primaryKey = 'idSiswa';
     public $timestamps = false;
     protected $table = 'siswa';
 }

@@ -27,7 +27,7 @@ class SiswaPerKelas extends Model
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class, 'idKelas','idkelas');
+        return $this->belongsTo(Kelas::class, 'idKelas','idKelas');
     }
 
     public function tagihanPerSiswa()

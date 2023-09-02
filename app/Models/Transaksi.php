@@ -14,7 +14,7 @@ class Transaksi extends Model
     public $fillable = [
         'faktur',
         'verify',
-        'idTagihan'
+        'idTPS'
     ];
 
     protected $table = 'transaksi';

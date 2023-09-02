@@ -19,8 +19,9 @@ class Kelas extends Model
 
     public function siswa()
     {
-        return $this->belongsToMany(Siswa::class, 'siswa_per_kelas', 'kelas_id', 'siswa_id');
+        return $this->belongsToMany(Siswa::class, 'siswa_per_kelas', 'idKelas', 'idSiswa');
     }
 
+    protected $primaryKey = 'idKelas';
     public $timestamps = false;
 }

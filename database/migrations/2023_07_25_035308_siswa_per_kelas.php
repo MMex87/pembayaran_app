@@ -16,6 +16,7 @@ return new class extends Migration
         // create table
         Schema::create('siswa_per_kelas', function (Blueprint $table) {
             $table->id('idSPK');
+            $table->softDeletes();
             
             // relasi table siswa
             $table->unsignedBigInteger('idSiswa');

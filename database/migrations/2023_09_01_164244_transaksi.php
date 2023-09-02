@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        // create table
+        Schema::create('transaksi', function (Blueprint $table) {
+            $table->id('idTransaksi');
+            $table->string('faktur');
+            $table->string('verify')->nullable();
+            // relasi ke table taginah
+            $table->unsignedBigInteger('idTPS');
+            $table->foreign('idTPS')->references('idTPS')->on('tagihan_per_siswa');
 
-        Schema::create('nama_tagihan', function (Blueprint $table) {
-            $table->id('idNamaTagihan');
-            $table->string('namaTagihan');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -30,7 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        // drop table
-        Schema::drop('nama_tagihan');
+        Schema::drop('transaksi');
     }
 };

@@ -20,7 +20,7 @@
                     <h5 class="card-title">Form Edit Kelas</h5>
 
                     <!-- Multi Columns Form -->
-                    <form class="row g-3" action="/kelas/{{ $kelas->idkelas }}" method="POST">
+                    <form class="row g-3" action="/kelas/{{ $kelas->idKelas }}" method="POST">
                         @method('PATCH')
                         @csrf
                         <div class="col-md-12">

@@ -95,7 +95,7 @@ class TagihanController extends Controller
         // generate tagihan per siswa
         if($selctAllKelas == 'semua kelas'){
             foreach ($kelas as $val ) {
-                $siswa = SiswaPerKelas::where('idKelas',$val->idkelas)->get();
+                $siswa = SiswaPerKelas::where('idKelas',$val->idKelas)->get();
                 
                 // dd($siswa->idSPK);
                 foreach ($siswa as $item) {
@@ -121,7 +121,7 @@ class TagihanController extends Controller
             foreach ($selectKelas as $item) {
                 $kelasLike = Kelas::where('namaKelas','LIKE',$item .'%')->get();
                 foreach ($kelasLike as $val ) {
-                    $siswa = SiswaPerKelas::where('idKelas',$val->idkelas)->get();
+                    $siswa = SiswaPerKelas::where('idKelas',$val->idKelas)->get();
                 
                     // dd($siswa->idSPK);
                     foreach ($siswa as $item) {

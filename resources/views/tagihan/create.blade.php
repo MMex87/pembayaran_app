@@ -55,7 +55,7 @@
                                 <option value="">-- Pilih Kelas --</option>
                                 <option value="semua kelas">semua kelas</option>
                                 @foreach ($kelas as $item)
-                                    <option value="{{ $item->idkelas }}">{{ $item->namaKelas }}</option>
+                                    <option value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
                                 @endforeach
                             </select>
                         </div> --}}

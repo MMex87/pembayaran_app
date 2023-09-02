@@ -27,7 +27,7 @@
         @foreach ($kelas as $value)
             <div class="col-6">
                 <!-- Default Card -->
-                <div class="card" onclick="detail({{ $value->idkelas }})" style="cursor: pointer">
+                <div class="card" onclick="detail({{ $value->idKelas }})" style="cursor: pointer">
                     <div class="card-body">
                         <h5 class="card-title">Kelas {{ $value->namaKelas }}</h5>
                         <p class="text-secondary">Wali Kelas : {{ $value->waliKelas }}</p>

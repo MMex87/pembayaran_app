@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                             <div class="col-1">
-                                <a href="/kelas/{{ $kelas->idkelas }}/edit" class="btn btn-warning"><i
+                                <a href="/kelas/{{ $kelas->idKelas }}/edit" class="btn btn-warning"><i
                                         class="bi bi-pencil-square"></i></a>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                                                 <td>{{ $value->namaSiswa }}</td>
                                                 <td>{{ $value->nik }}</td>
                                                 <td>{{ $value->jenisKelamin }}</td>
-                                                <td>{{ $value->kelas->namaKelas }}</td>
+                                                <td>{{ $value->kelas->first()->namaKelas }}</td>
                                                 <td>{{ $value->namaWali }}</td>
                                                 <td><a href="/siswa/{{ $value->idSiswa }}"
                                                         class="btn btn-primary">Detail</a></td>

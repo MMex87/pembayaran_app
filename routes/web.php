@@ -40,6 +40,7 @@ Route::post('siswa',[SiswaController::class, 'store']);
 Route::get('siswa/{id}',[SiswaController::class, 'show']);
 Route::patch('siswa/{id}',[SiswaController::class,'update']);
 Route::delete('siswa/{id}',[SiswaController::class,'destroy']);
+Route::post('siswaImport',[SiswaController::class, 'import']);
 // api get siswa
 Route::get('getSiswa',[SiswaPerKelasController::class, 'getSiswa']);
 

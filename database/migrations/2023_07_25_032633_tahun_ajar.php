@@ -17,8 +17,7 @@ return new class extends Migration
         Schema::create('tahun_ajar', function (Blueprint $table) {
             $table->id('idTahunAjar');
             $table->string('tahun');
-            $table->string('semester');
-            // $table->timestamps();
+            $table->softDeletes();
         });
     }
 

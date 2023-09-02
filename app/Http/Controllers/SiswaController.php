@@ -7,6 +7,8 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TahunAjar;
+use Spatie\SimpleExcel\SimpleExcelReader;
+use PHPExcel_IOFactory;
 
 class SiswaController extends Controller
 {
@@ -96,7 +98,7 @@ class SiswaController extends Controller
     public function show($id)
     {
         $siswa = Siswa::where('idSiswa',$id)->first();
-        $kelas = Kelas::where('idkelas',$siswa->idKelas)->first();
+        $kelas = Kelas::where('idKelas',$siswa->idKelas)->first();
         $data_kelas = Kelas::get();
 
         $view_data=[
@@ -172,5 +174,37 @@ class SiswaController extends Controller
         SiswaPerKelas::where('idSiswa',$id)->delete();
 
         return redirect('siswa');
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('inputExcel');
+
+        $filePath = $file->getPathname();
+
+        // Inisialisasi objek PHPExcel
+        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+        
+        dd($objPHPExcel);
+        
+        // Mendapatkan sheet aktif
+        $worksheet = $objPHPExcel->getActiveSheet();
+
+        // Mendapatkan data dalam bentuk array
+        $data = $worksheet->toArray();
+
+
+        $reader = SimpleExcelReader::create($file->getPathname())->getRows();
+
+
+        foreach ($reader as $row) {
+            Item::create([
+                'name' => $row['nama'], // Sesuaikan dengan nama kolom di Excel
+                'description' => $row['deskripsi'], // Sesuaikan dengan nama kolom di Excel
+                // Tambahkan kolom lain sesuai kebutuhan
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data imported successfully!');
     }
 }
