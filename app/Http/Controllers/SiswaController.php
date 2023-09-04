@@ -7,8 +7,9 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TahunAjar;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use PHPExcel_IOFactory;
+use App\Imports\ImportExcel;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 
 class SiswaController extends Controller
 {
@@ -178,33 +179,18 @@ class SiswaController extends Controller
 
     public function import(Request $request)
     {
-        $file = $request->file('inputExcel');
+        // Ambil nilai idKelas dari input form atau sumber lain
+        $idKelas = $request->input('kelas');
 
-        $filePath = $file->getPathname();
-
-        // Inisialisasi objek PHPExcel
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+        // Simpan nilai idKelas ke dalam properti $idKelas pada model Excel
+        $import = new ImportExcel();
+        $import->idKelas = $idKelas;
         
-        dd($objPHPExcel);
+        // Lakukan proses impor menggunakan Maatwebsite\Excel
+        Excel::import($import, $request->file('inputExcel'));
         
-        // Mendapatkan sheet aktif
-        $worksheet = $objPHPExcel->getActiveSheet();
+        // Session::flash('successExcel', 'Data Import Siswa Berhasil Tersimpan');
 
-        // Mendapatkan data dalam bentuk array
-        $data = $worksheet->toArray();
-
-
-        $reader = SimpleExcelReader::create($file->getPathname())->getRows();
-
-
-        foreach ($reader as $row) {
-            Item::create([
-                'name' => $row['nama'], // Sesuaikan dengan nama kolom di Excel
-                'description' => $row['deskripsi'], // Sesuaikan dengan nama kolom di Excel
-                // Tambahkan kolom lain sesuai kebutuhan
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Data imported successfully!');
+        return redirect()->back()->with('successExcel', 'Data Import Siswa Berhasil Tersimpan');
     }
 }

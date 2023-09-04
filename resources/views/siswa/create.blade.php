@@ -134,4 +134,21 @@
             </div>
         </div>
     </div>
+
+    @if (Session::has('successExcel'))
+        <script>
+            $(document).ready(function() {
+                swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: '{{ Session::get('successExcel') }}',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        </script>
+        @php(session()->forget('successExcel'))
+    @endif
+
+
 @endsection
