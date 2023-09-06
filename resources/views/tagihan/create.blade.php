@@ -43,22 +43,16 @@
                             <input type="date" class="form-control" id="tanggalSelesai" name="tanggalSelesai">
                         </div>
                         <div class="col-md-12">
+                            <label for="hargaBayar" class="form-label">Harga Bayar</label>
+                            <input type="number" class="form-control" id="hargaBayar" name="hargaBayar">
+                        </div>
+                        <div class="col-md-12">
                             <label for="status" class="form-label">Status Aktif</label>
                             <select name="status" id="status" class="form-control">
                                 <option value="aktif">Aktif</option>
                                 <option value="tidak aktif">Tidak Aktif</option>
                             </select>
                         </div>
-                        {{-- <div class="col-md-12">
-                            <label for="kelas" class="form-label">Kelas</label>
-                            <select name="kelas" id="kelas" class="form-control">
-                                <option value="">-- Pilih Kelas --</option>
-                                <option value="semua kelas">semua kelas</option>
-                                @foreach ($kelas as $item)
-                                    <option value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
                         <div class="col-md-12">
                             <label for="kelas" class="form-label">Kelas</label>
                             <br>
@@ -101,8 +95,8 @@
                                     </td>
                                     <td>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input checkKelas" type="checkbox" name="checkKelas[]"
-                                                id="checkKelas5" value="5">
+                                            <input class="form-check-input checkKelas" type="checkbox"
+                                                name="checkKelas[]" id="checkKelas5" value="5">
                                             <label class="form-check-label" for="checkKelas5">Kelas 5</label>
                                         </div>
                                     </td>

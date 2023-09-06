@@ -66,20 +66,18 @@ class TransaksiController extends Controller
                                 'idKelas' => $idKelas
                             ])->first();
 
-        Transaksi::create([
-            'faktur' => $faktur,
-            'verify' => 'Belum Verify',
-            'idTagihan' => $idTagihan
-        ]);
-
-
-        TagihanPerSiswa::where([
+        $tps = TagihanPerSiswa::where([
                             'idSPK' => $spk->idSPK,
                             'idTagihan' =>$idTagihan
                         ])->update([
                             'status' => 'Lunas'
                         ]);
 
+        Transaksi::create([
+            'faktur' => $faktur,
+            'verify' => 'Belum Verify',
+            'idTPS' => $tps
+        ]);
         
         Session::flash('success', 'Pembayaran berhasil');
         return redirect('pembayaran');

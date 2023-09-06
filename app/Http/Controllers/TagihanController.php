@@ -55,11 +55,10 @@ class TagihanController extends Controller
         $idTagihan = $request->input('namaTagihan');
         $tanggalMulai = $request->input('tanggalMulai');
         $tanggalSelesai = $request->input('tanggalSelesai');
+        $hargaBayar = $request->input('hargaBayar');
         $status = $request->input('status');
         $selectKelas = $request->input('checkKelas',[]);
         $selctAllKelas = $request->input('allCheckKelas');
-
-        // dd($selctAllKelas);
 
         $kelas = Kelas::orderBy('namaKelas','ASC')->get();
 
@@ -87,6 +86,7 @@ class TagihanController extends Controller
         $tagihan = Tagihan::create([
             'idNamaTagihan' => $idTagihan,
             'tanggalMulai' => $tanggalMulai,
+            'hargaBayar' => $hargaBayar,
             'tanggalSelesai' => $tanggalSelesai,
             'kelas' => $dataKelas,
             'status' => $status
@@ -115,7 +115,6 @@ class TagihanController extends Controller
                         'idSPK' => $item->idSPK
                     ]);
                 }
-                // dd($noInvoice);
             }
         }else{
             foreach ($selectKelas as $item) {
