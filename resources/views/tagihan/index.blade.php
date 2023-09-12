@@ -48,7 +48,7 @@
                                         @foreach ($tagihan as $value)
                                             <tr data-index="{{ $index }}">
                                                 <td>{{ $index }}</td>
-                                                <td>{{ $value->namaTagihan->first()->namaTagihan }}</td>
+                                                <td>{{ $value->namaTagihan->namaTagihan }}</td>
                                                 <td>{{ $value->tanggalMulai }}</td>
                                                 <td>{{ $value->tanggalSelesai }}</td>
                                                 <td>{{ $value->kelas }}</td>

@@ -15,5 +15,11 @@ class NamaTagihan extends Model
         'namaTagihan'
     ];
 
+    public function tagihan()
+    {
+        return $this->hasMany(Tagihan::class, 'idNamaTagihan');
+    }
+
+    protected $primaryKey = 'idNamaTagihan';
     protected $table = "nama_tagihan";
 }

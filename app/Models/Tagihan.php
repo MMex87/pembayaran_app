@@ -23,15 +23,26 @@ class Tagihan extends Model
         'kelas'
     ];
 
-    public function namaTagihan(): HasMany
+    // public function namaTagihan(): HasMany
+    // {
+    //     return $this->hasMany(NamaTagihan::class,'idNamaTagihan','idNamaTagihan');
+    // }
+
+    // public function tagihanPerSiswa()
+    // {
+    //     return $this->hasMany(TagihanPerSiswa::class, 'idTagihan', 'idTagihan');
+    // }
+
+    public function namaTagihan()
     {
-        return $this->hasMany(NamaTagihan::class,'idNamaTagihan','idNamaTagihan');
+        return $this->belongsTo(NamaTagihan::class, 'idNamaTagihan');
     }
 
     public function tagihanPerSiswa()
     {
-        return $this->hasMany(TagihanPerSiswa::class, 'idTagihan', 'idTagihan');
+        return $this->hasMany(TagihanPerSiswa::class, 'idTagihan');
     }
 
+    protected $primaryKey = 'idTagihan';
     protected $table = 'tagihan';
 }

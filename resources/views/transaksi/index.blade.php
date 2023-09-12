@@ -49,27 +49,40 @@
                     <form class="row g-3" action="/transaksi" method="POST">
                         @csrf
                         <div class="col-md-12">
-                            <label for="faktur" class="form-label">Faktur</label>
-                            <input type="text" class="form-control" id="faktur" name="faktur"
-                                value="{{ $faktur }}" readonly>
+                            <label for="invoice" class="form-label">Invoice</label>
+                            <input type="text" class="form-control" id="invoice" name="invoice"
+                                value="{{ $invoice }}" readonly>
                         </div>
                         <div class="col-md-6">
                             <label for="kelas" class="form-label">Kelas</label>
                             <select name="kelas" id="kelas" class="form-control">
                                 <option value="">-- Pilih Kelas --</option>
                                 @foreach ($kelas as $item)
-                                    <option value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
+                                    <option
+                                        @if($tagihan->isNotEmpty())
+                                            @selected($tagihan[0]->siswaPerKelas->siswa->idKelas == $item->idKelas)
+                                        @endif
+                                        value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="siswa" class="form-label">Siswa</label>
-                            <input type="text" class="form-control" id="siswa" name="siswa">
+                            <input type="text" class="form-control" id="siswa" name="siswa"
+                                @if($tagihan->isNotEmpty())
+                                    value="{{$tagihan[0]->siswaPerKelas->siswa->namaSiswa}}"
+                                @endif  
+                            >
                         </div>
                         <div class="col-md-12">
                             <label for="namaTagihan" class="form-label">Nama Tagihan</label>
                             <select name="namaTagihan" id="namaTagihan" class="form-control">
                                 <option value="">-- Pilih Tagihan --</option>
+                                @if($tagihan->isNotEmpty())
+                                    @foreach ($daftarTagihan as $val)
+                                        <option value="{{$val->idTagihan}}">{{$val->tagihan->namaTagihan->namaTagihan}}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
                         <div class="col-md-12">
@@ -77,11 +90,113 @@
                             <input type="text" class="form-control" id="totalBayar" name="totalBayar" disabled>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Bayar</button>
+                            <button type="submit" class="btn btn-primary">Tambah</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </form><!-- End Multi Columns Form -->
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-beetwen">
+                <div class="col-6">
+                    <h5 class="card-title">Cart List Pembayaran</h5>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <h6 class="card-title">
+                        <span>{{ $tagihan == '[]' ? '' : $tagihan[0]->siswaPerKelas->siswa->namaSiswa . ' (' . $invoice . ')' }}</span>
+                    </h6>
+                </div>
+            </div>
+            <!-- Table with stripped rows -->
+            <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                <div class="datatable-container">
+                    <table class="table datatable datatable-table">
+                        <thead>
+                            <tr>
+                                <th data-sortable="true" style="width: 5%;">#</th>
+                                <th data-sortable="true" style="width: 35%;">Nama Tagihan</th>
+                                <th data-sortable="true" style="width: 25%;">Nomor Tagihan</th>
+                                <th data-sortable="true" style="width: 25%;">Harga Bayar</th>
+                                <th data-sortable="true" style="width: 10%;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($index = 1)
+                            @foreach ($tagihan as $value)
+                                <tr data-index="{{ $index }}">
+                                    <td>{{ $index }}</td>
+                                    <td>{{ $value->tagihan->namaTagihan->namaTagihan }}</td>
+                                    <td>{{ $value->noTagihan }}</td>
+                                    <td>{{ $value->tagihan->hargaBayar }}</td>
+                                    <td><a href="/siswa/{{ $value->idSiswa }}" class="btn btn-danger">Hapus</a></td>
+                                </tr>
+                                @php($index++)
+                            @endForeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End Table with stripped rows -->
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success me-5" data-bs-toggle="modal"
+                data-bs-target="#modalCheckOut">Bayar</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalCheckOut" tabindex="-1" aria-labelledby="modalCheckOutLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalCheckOutLabel">Chekout Pembayaran</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                        <div class="datatable-container">
+                            <table class="table datatable datatable-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sortable="true" style="width: 5%;">#</th>
+                                        <th data-sortable="true" style="width: 35%;">Nama Tagihan</th>
+                                        <th data-sortable="true" style="width: 30%;">Nomor Tagihan</th>
+                                        <th data-sortable="true" style="width: 30%;">Harga Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php($total = 0)
+                                    @forelse ($tagihan as $value)
+                                        <tr data-index="{{ $loop->index + 1 }}">
+                                            <td>{{ $loop->index + 1 }}</td>
+                                            <td>{{ $value->tagihan->namaTagihan->namaTagihan }}</td>
+                                            <td>{{ $value->noTagihan }}</td>
+                                            <td>{{ $value->tagihan->hargaBayar }}</td>
+                                        </tr>
+                                        @php($total += $value->tagihan->hargaBayar)
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center">Tidak ada data</td>
+                                        </tr>
+                                    @endforelse
+                                    <tr>
+                                        <td colspan="3" class="text-end">Total: </td>
+                                        <td colspan="2">Rp {{ $total }}</td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Print</button>
                 </div>
             </div>
         </div>
@@ -170,13 +285,12 @@
                             var select = $(
                                 "#namaTagihan"); // Ganti dengan ID elemen select Anda
                             select.empty(); // Kosongkan elemen select
-
                             // Tambahkan opsi ke elemen select
                             $.each(data, function(index, item) {
                                 // Cek apakah ada data dalam array nama_tagihan
-                                if (item.nama_tagihan && item.nama_tagihan.length > 0) {
+                                if (item.nama_tagihan) {
                                     // Ambil nilai namaTagihan dari data pertama dalam array nama_tagihan
-                                    var namaTagihan = item.nama_tagihan[0].namaTagihan;
+                                    var namaTagihan = item.nama_tagihan.namaTagihan;
                                     select.append(new Option(namaTagihan, item
                                         .idTagihan));
                                 }

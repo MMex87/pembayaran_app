@@ -23,10 +23,30 @@ class TransaksiController extends Controller
     {
         $date = date('mYdiHs');
         $kelas = Kelas::orderBy('namaKelas','ASC')->get();
-        $faktur = 'FKT'.$date;
+        $invoice;
+        $daftarTagihan;
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa'])
+                                        ->where('status','Cart')
+                                        ->get();
+
+        if($tagihan->isNotEmpty()){
+            $invoice = $tagihan[0]->transaksi->invoice;
+            $idSPK = $tagihan[0]->idSPK;
+            $daftarTagihan = TagihanPerSiswa::with('tagihan.namaTagihan')
+                                                ->where(['idSPK'=>$idSPK, 'status'=>'Belum Lunas'])->get();
+            // dd($daftarTagihan[0]->idTagihan);
+            
+        }else{
+            $invoice = 'INV'.$date;
+        }
+
+        // dd($tagihan[0]->siswaPerKelas->siswa->idKelas);
+
         $view_data=[
             'kelas' => $kelas,
-            'faktur' => $faktur
+            'invoice' => $invoice,
+            'tagihan' => $tagihan,
+            'daftarTagihan' => $daftarTagihan
         ];
         
         return view('transaksi.index',$view_data)->with('judul','Pembayaran');
@@ -50,7 +70,7 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
-        $faktur = $request->input('faktur');
+        $invoice = $request->input('invoice');
         $idKelas = $request->input('kelas');
         $namaSiswa = $request->input('siswa');
         $idTagihan = $request->input('namaTagihan');
@@ -67,16 +87,20 @@ class TransaksiController extends Controller
                             ])->first();
 
         $tps = TagihanPerSiswa::where([
-                            'idSPK' => $spk->idSPK,
-                            'idTagihan' =>$idTagihan
-                        ])->update([
-                            'status' => 'Lunas'
-                        ]);
+                                    'idSPK' => $spk->idSPK,
+                                    'idTagihan' =>$idTagihan
+                                ])->first();
 
+        TagihanPerSiswa::where([
+                            'idTPS' => $tps->idTPS
+                        ])->update([
+                            'status' => 'Cart'
+                        ]);
+        
         Transaksi::create([
-            'faktur' => $faktur,
+            'invoice' => $invoice,
             'verify' => 'Belum Verify',
-            'idTPS' => $tps
+            'idTPS' => $tps->idTPS
         ]);
         
         Session::flash('success', 'Pembayaran berhasil');

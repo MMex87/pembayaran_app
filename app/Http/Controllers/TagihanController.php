@@ -106,12 +106,12 @@ class TagihanController extends Controller
                         $randomNumbers[] = random_int(0, 9); // Ganti rentang sesuai kebutuhan Anda
                     }
                     $randomNumbers = implode('',$randomNumbers);
-                    $noInvoice= 'INV/'.$randomNumbers;
+                    $noInvoice= $randomNumbers;
                     
                     TagihanPerSiswa::create([
                         'noTagihan' => $noInvoice,
                         'status' => 'Belum Lunas',
-                        'idTagihan' => $tagihan->id,
+                        'idTagihan' => $tagihan->idTagihan,
                         'idSPK' => $item->idSPK
                     ]);
                 }
@@ -131,12 +131,12 @@ class TagihanController extends Controller
                             $randomNumbers[] = random_int(0, 9); // Ganti rentang sesuai kebutuhan Anda
                         }
                         $randomNumbers = implode('',$randomNumbers);
-                        $noInvoice= 'INV/'.$randomNumbers;
+                        $noInvoice= $randomNumbers;
                         
                         TagihanPerSiswa::create([
                             'noTagihan' => $noInvoice,
                             'status' => 'Belum Lunas',
-                            'idTagihan' => $tagihan->id,
+                            'idTagihan' => $tagihan->idTagihan,
                             'idSPK' => $item->idSPK
                         ]);
                     }

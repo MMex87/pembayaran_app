@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id('idTransaksi');
-            $table->string('faktur');
+            $table->string('invoice');
             $table->string('verify')->nullable();
+            $table->softDeletes();
+
             // relasi ke table taginah
             $table->unsignedBigInteger('idTPS');
             $table->foreign('idTPS')->references('idTPS')->on('tagihan_per_siswa');
