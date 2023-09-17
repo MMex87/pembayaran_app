@@ -48,6 +48,9 @@ Route::get('getSiswa',[SiswaPerKelasController::class, 'getSiswa']);
 Route::get('tagihan',[TagihanController::class, 'index']);
 Route::get('tagihan/create',[TagihanController::class, 'create']);
 Route::post('tagihan',[TagihanController::class, 'store']);
+Route::get('tagihan/{id}/edit',[TagihanController::class, 'edit']);
+Route::patch('tagihan/{id}',[TagihanController::class, 'update']);
+
 // api get siswa
 Route::get('getTagihan',[TagihanController::class,'getTagihan']);
 Route::get('getTotalTagihan',[TagihanController::class,'getTotalTagihan']);

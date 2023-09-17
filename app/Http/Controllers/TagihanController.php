@@ -52,7 +52,7 @@ class TagihanController extends Controller
      */
     public function store(Request $request)
     {
-        $idTagihan = $request->input('namaTagihan');
+        $idNamaTagihan = $request->input('namaTagihan');
         $tanggalMulai = $request->input('tanggalMulai');
         $tanggalSelesai = $request->input('tanggalSelesai');
         $hargaBayar = $request->input('hargaBayar');
@@ -65,12 +65,14 @@ class TagihanController extends Controller
         $dataKelas;
         
 
-        if($selctAllKelas == 'semua kelas'){
-            $temp = array();
-            foreach ($kelas as $val ) {
-                array_push($temp,$val->namaKelas);
-            }
-            $dataKelas = implode(',',$temp);
+        if($selctAllKelas == 'Semua Kelas'){
+            // $temp = array();
+            // foreach ($kelas as $val ) {
+            //     array_push($temp,$val->namaKelas);
+            // }
+            // $dataKelas = implode(',',$temp);
+            
+            $dataKelas = $selctAllKelas;
         }else{
             $temp = array();
             foreach ($selectKelas as $item) {
@@ -84,7 +86,7 @@ class TagihanController extends Controller
 
         // create Tagihan
         $tagihan = Tagihan::create([
-            'idNamaTagihan' => $idTagihan,
+            'idNamaTagihan' => $idNamaTagihan,
             'tanggalMulai' => $tanggalMulai,
             'hargaBayar' => $hargaBayar,
             'tanggalSelesai' => $tanggalSelesai,
@@ -93,7 +95,7 @@ class TagihanController extends Controller
         ]);
 
         // generate tagihan per siswa
-        if($selctAllKelas == 'semua kelas'){
+        if($selctAllKelas == 'Semua Kelas'){
             foreach ($kelas as $val ) {
                 $siswa = SiswaPerKelas::where('idKelas',$val->idKelas)->get();
                 
@@ -155,7 +157,7 @@ class TagihanController extends Controller
      */
     public function show(Tagihan $tagihan)
     {
-        //
+        
     }
 
     /**
@@ -164,9 +166,24 @@ class TagihanController extends Controller
      * @param  \App\Models\Tagihan  $tagihan
      * @return \Illuminate\Http\Response
      */
-    public function edit(Tagihan $tagihan)
+    public function edit($id)
     {
-        //
+        $tagihan = Tagihan::with('namaTagihan')->where('idTagihan', $id)->first();
+        $namaTagihan = NamaTagihan::get();
+        $arrayKelas = [];
+
+        if($tagihan->kelas != "Semua Kelas"){
+            $arrayKelas = array_unique(array_filter(explode(' ', preg_replace('/[^0-9]/', ' ', $tagihan->kelas))));
+        }
+
+        $data_view=[
+            'tagihan'=>$tagihan,
+            'namaTagihan'=>$namaTagihan,
+            'daftarKelas' =>$arrayKelas,
+            'idTagihan' =>$id
+        ];
+
+        return view('tagihan.edit',$data_view)->with('judul','Tagihan');
     }
 
     /**
@@ -176,9 +193,179 @@ class TagihanController extends Controller
      * @param  \App\Models\Tagihan  $tagihan
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tagihan $tagihan)
+    public function update(Request $request, $id)
     {
-        //
+        // get input
+        $idNamaTagihan = $request->input('namaTagihan');
+        $tanggalMulai = $request->input('tanggalMulai');
+        $tanggalSelesai = $request->input('tanggalSelesai');
+        $hargaBayar = $request->input('hargaBayar');
+        $status = $request->input('status');
+        $selectKelas = $request->input('checkKelas',[]);
+        $selctAllKelas = $request->input('allCheckKelas');
+
+        // // deklarasi array
+        // $arrayKelas = [];
+
+        // // get data
+        // $tagihan = Tagihan::with('namaTagihan')->where('idTagihan', $id)->first();
+        // $kelas = Kelas::orderBy('namaKelas','ASC')->get();
+
+        // if($tagihan->kelas != "Semua Kelas"){
+        //     $arrayKelas = array_unique(array_filter(explode(' ', preg_replace('/[^0-9]/', ' ', $tagihan->kelas))));
+        // }
+
+        // if($selctAllKelas == 'Semua Kelas'){
+            
+        //     $dataKelas = $selctAllKelas;
+        // }else{
+        //     $temp = array();
+        //     foreach ($selectKelas as $item) {
+        //         $kelasLike = Kelas::where('namaKelas','LIKE',$item .'%')->get();
+        //         foreach ($kelasLike as $item2) {
+        //             array_push($temp,$item2->namaKelas);
+        //         }
+        //     }
+        //     $dataKelas = implode(',',$temp);
+        // }
+
+        
+        // // edit Tagihan Per Siswa
+        // if($selctAllKelas == 'Semua Kelas' && $tagihan->kelas != "Semua Kelas"){
+        //     foreach ($kelas as $value) {
+        //         // $siswa = SiswaPerKelas::where('idKelas',$value->idKelas)->get();
+        //         foreach ($arrayKelas as $val ) {
+        //             $siswaPilihan = SiswaPerKelas::with('kelas')
+        //                                         ->whereDoesntHave('kelas', function($query) use ($val) {
+        //                                             $query->where('namaKelas', 'like', $val . '%');
+        //                                         })
+        //                                         ->whereHas('kelas', function($query) use ($value) {
+        //                                             $query->where('idKelas', $value->idKelas);
+        //                                         })
+        //                                         ->get();
+                    
+        //             foreach ($siswaPilihan as $item) {
+        //                 // random number for noTagihan
+        //                 $randomNumbers = [];
+        
+        //                 for ($i = 0; $i < 10; $i++) {
+        //                     $randomNumbers[] = random_int(0, 9); // Ganti rentang sesuai kebutuhan Anda
+        //                 }
+        //                 $randomNumbers = implode('',$randomNumbers);
+        //                 $noInvoice= $randomNumbers;
+                        
+        //                 TagihanPerSiswa::create([
+        //                     'noTagihan' => $noInvoice,
+        //                     'status' => 'Belum Lunas',
+        //                     'idTagihan' => $tagihan->idTagihan,
+        //                     'idSPK' => $item->idSPK
+        //                 ]);
+        //             }
+        //         }  
+        //     }
+        // }else{
+        //     if($tagihan->kelas == "Semua Kelas"){
+        //         foreach ($selectKelas as $value) {
+        //             // $siswa = SiswaPerKelas::where('idKelas',$value->idKelas)->get();
+        //             foreach ($kelas as $val ) {
+        //                 $siswaPilihan = SiswaPerKelas::with('kelas','tagihanPerSiswa')
+        //                                             ->whereDoesntHave('kelas', function($query) use ($value) {
+        //                                                 $query->where('namaKelas', 'like', $value . '%');
+        //                                             })
+        //                                             ->whereHas('kelas', function($query) use ($val) {
+        //                                                 $query->where('namaKelas', 'like', $val->namaKelas . '%');
+        //                                             })
+        //                                             ->get();
+                        
+        //                 foreach ($siswaPilihan as $item) {
+        //                     TagihanPerSiswa::where('idTPS', $item->tagihanPerSiswa[0]->idTPS)->forceDelete();
+        //                 }
+        //             }  
+        //         }
+        //     }else{
+        //         foreach ($selectKelas as $value) {
+        //             foreach ($kelas as $val) {
+        //                 $siswaPilihan = SiswaPerKelas::with('kelas','tagihanPerSiswa')
+        //                                             ->whereDoesntHave('kelas', function($query) use ($value) {
+        //                                                 $query->where('namaKelas', 'like', $value . '%');
+        //                                             })
+        //                                             ->whereHas('kelas', function($query) use ($val) {
+        //                                                 $query->where('namaKelas', 'like', $val->namaKelas . '%');
+        //                                             })
+        //                                             ->get();
+        //                 foreach ($siswaPilihan as $item) {
+        //                     TagihanPerSiswa::where('idTPS', $item->tagihanPerSiswa[0]->idTPS)->forceDelete();
+        //                 }
+        //             }
+        //             foreach ($arrayKelas as $val) {
+        //                 $siswaPilihan = SiswaPerKelas::with('kelas','tagihanPerSiswa')
+        //                                             ->whereDoesntHave('kelas', function($query) use ($value) {
+        //                                                 $query->where('namaKelas', 'like', $val . '%');
+        //                                             })
+        //                                             ->whereHas('kelas', function($query) use ($val) {
+        //                                                 $query->where('namaKelas', 'like', $value . '%');
+        //                                             })
+        //                                             ->get();
+                                                    
+        //                 foreach ($siswaPilihan as $item) {
+        //                     // random number for noTagihan
+        //                     $randomNumbers = [];
+            
+        //                     for ($i = 0; $i < 10; $i++) {
+        //                         $randomNumbers[] = random_int(0, 9); // Ganti rentang sesuai kebutuhan Anda
+        //                     }
+        //                     $randomNumbers = implode('',$randomNumbers);
+        //                     $noInvoice= $randomNumbers;
+                            
+        //                     TagihanPerSiswa::create([
+        //                         'noTagihan' => $noInvoice,
+        //                         'status' => 'Belum Lunas',
+        //                         'idTagihan' => $tagihan->idTagihan,
+        //                         'idSPK' => $item->idSPK
+        //                     ]);
+        //                 }
+        //             }
+        //         }
+        //     }
+
+        //     // foreach ($selectKelas as $item) {
+        //     //     $kelasLike = Kelas::where('namaKelas','LIKE',$item .'%')->get();
+        //     //     foreach ($kelasLike as $val ) {
+        //     //         $siswa = SiswaPerKelas::where('idKelas',$val->idKelas)->get();
+                
+        //     //         // dd($siswa->idSPK);
+        //     //         foreach ($siswa as $item) {
+        //     //             // random number for noTagihan
+        //     //             $randomNumbers = [];
+        
+        //     //             for ($i = 0; $i < 10; $i++) {
+        //     //                 $randomNumbers[] = random_int(0, 9); // Ganti rentang sesuai kebutuhan Anda
+        //     //             }
+        //     //             $randomNumbers = implode('',$randomNumbers);
+        //     //             $noInvoice= $randomNumbers;
+                        
+        //     //             TagihanPerSiswa::create([
+        //     //                 'noTagihan' => $noInvoice,
+        //     //                 'status' => 'Belum Lunas',
+        //     //                 'idTagihan' => $tagihan->idTagihan,
+        //     //                 'idSPK' => $item->idSPK
+        //     //             ]);
+        //     //         }
+        //     //     }
+        //     // }
+        // }
+
+        // edit tagihan
+        Tagihan::where('idTagihan',$id)
+                    ->update([
+                        'idNamaTagihan' => $idNamaTagihan,
+                        'tanggalMulai' => $tanggalMulai,
+                        'hargaBayar' => $hargaBayar,
+                        'tanggalSelesai' => $tanggalSelesai,
+                        'status' => $status
+        ]);
+
+        return redirect('tagihan');
     }
 
     /**

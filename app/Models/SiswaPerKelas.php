@@ -32,8 +32,9 @@ class SiswaPerKelas extends Model
 
     public function tagihanPerSiswa()
     {
-        return $this->hasMany(TagihanPerSiswa::class, 'idTPS','idTPS');
+        return $this->hasMany(TagihanPerSiswa::class, 'idSPK');
     }
 
+    protected $primaryKey = 'idSPK';
     public $timestamps = false;
 }

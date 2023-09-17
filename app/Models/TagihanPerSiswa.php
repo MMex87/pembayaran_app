@@ -24,7 +24,7 @@ class TagihanPerSiswa extends Model
 
     public function siswaPerKelas()
     {
-        return $this->belongsTo(SiswaPerKelas::class, 'idSPK','idSPK');
+        return $this->belongsTo(SiswaPerKelas::class,'idSPK');
     }
 
     // public function tagihan()
@@ -39,7 +39,7 @@ class TagihanPerSiswa extends Model
 
     public function transaksi()
     {
-        return $this->hasOne(Transaksi::class, 'idTPS');
+        return $this->hasOne(Transaksi::class, 'idSPK');
     }
 
 

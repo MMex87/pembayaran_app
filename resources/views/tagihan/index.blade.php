@@ -53,7 +53,8 @@
                                                 <td>{{ $value->tanggalSelesai }}</td>
                                                 <td>{{ $value->kelas }}</td>
                                                 <td>{{ $value->status }}</td>
-                                                <td><a href="/tagihan" class="btn btn-primary">Detail</a></td>
+                                                <td><a href="/tagihan/{{ $value->idTagihan }}/edit"
+                                                        class="btn btn-warning">Edit</a></td>
                                             </tr>
                                             @php($index++)
                                         @endForeach

@@ -38,6 +38,7 @@ class TransaksiController extends Controller
             
         }else{
             $invoice = 'INV'.$date;
+            $daftarTagihan = '';
         }
 
         // dd($tagihan[0]->siswaPerKelas->siswa->idKelas);
