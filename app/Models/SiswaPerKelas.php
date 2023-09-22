@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\TagihanPerSiswa;
+use App\Models\TahunAjar;
 
 class SiswaPerKelas extends Model
 {
@@ -28,6 +29,11 @@ class SiswaPerKelas extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'idKelas','idKelas');
+    }
+
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class, 'idTahunAjar');
     }
 
     public function tagihanPerSiswa()

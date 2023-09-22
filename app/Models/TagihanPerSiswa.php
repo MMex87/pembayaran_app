@@ -39,7 +39,7 @@ class TagihanPerSiswa extends Model
 
     public function transaksi()
     {
-        return $this->hasOne(Transaksi::class, 'idSPK');
+        return $this->hasOne(Transaksi::class, 'idTPS');
     }
 
 

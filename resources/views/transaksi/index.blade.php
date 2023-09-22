@@ -59,9 +59,7 @@
                                 <option value="">-- Pilih Kelas --</option>
                                 @foreach ($kelas as $item)
                                     <option
-                                        @if($tagihan->isNotEmpty())
-                                            @selected($tagihan[0]->siswaPerKelas->siswa->idKelas == $item->idKelas)
-                                        @endif
+                                        @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->siswaPerKelas->siswa->idKelas == $item->idKelas) @endif
                                         value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
                                 @endforeach
                             </select>
@@ -69,18 +67,16 @@
                         <div class="col-md-6">
                             <label for="siswa" class="form-label">Siswa</label>
                             <input type="text" class="form-control" id="siswa" name="siswa"
-                                @if($tagihan->isNotEmpty())
-                                    value="{{$tagihan[0]->siswaPerKelas->siswa->namaSiswa}}"
-                                @endif  
-                            >
+                                @if ($tagihan->isNotEmpty()) value="{{ $tagihan[0]->siswaPerKelas->siswa->namaSiswa }}" @endif>
                         </div>
                         <div class="col-md-12">
                             <label for="namaTagihan" class="form-label">Nama Tagihan</label>
                             <select name="namaTagihan" id="namaTagihan" class="form-control">
                                 <option value="">-- Pilih Tagihan --</option>
-                                @if($tagihan->isNotEmpty())
+                                @if ($tagihan->isNotEmpty())
                                     @foreach ($daftarTagihan as $val)
-                                        <option value="{{$val->idTagihan}}">{{$val->tagihan->namaTagihan->namaTagihan}}</option>
+                                        <option value="{{ $val->idTagihan }}">{{ $val->tagihan->namaTagihan->namaTagihan }}
+                                        </option>
                                     @endforeach
                                 @endif
                             </select>
@@ -133,7 +129,11 @@
                                     <td>{{ $value->tagihan->namaTagihan->namaTagihan }}</td>
                                     <td>{{ $value->noTagihan }}</td>
                                     <td>{{ $value->tagihan->hargaBayar }}</td>
-                                    <td><a href="/siswa/{{ $value->idSiswa }}" class="btn btn-danger">Hapus</a></td>
+                                    <form action="/pembayaran/{{ $value->idTPS }}" method="POST">
+                                        @method('PATCH')
+                                        @csrf
+                                        <td><button type="submit" class="btn btn-danger">Hapus</button></td>
+                                    </form>
                                 </tr>
                                 @php($index++)
                             @endForeach
@@ -196,7 +196,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Print</button>
+                    <a href="/print-nota" type="button" id="btnPrint" class="btn btn-primary">Print</a>
                 </div>
             </div>
         </div>
@@ -329,6 +329,36 @@
                     icon: 'success'
                 });
             });
+        </script>
+    @endif
+
+    @if (Session::has('successBayar'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ Session::get('successBayar') }}',
+                    icon: 'success'
+                });
+            });
+        </script>
+    @endif
+
+    @if (Session::has('print'))
+        <script>
+            $(document).ready(function() {
+
+                const pdfURL = '{{ Session::get('print') }}'; // Gantilah dengan URL atau path menuju PDF Anda
+
+                // Buka jendela baru dengan URL PDF
+                const newWindow = window.open(pdfURL, '_blank');
+
+                // Tunggu hingga jendela baru selesai memuat PDF
+                newWindow.onload = () => {
+                    // Jalankan perintah mencetak setelah jendela selesai memuat
+                    newWindow.print();
+                };
+            })
         </script>
     @endif
 
