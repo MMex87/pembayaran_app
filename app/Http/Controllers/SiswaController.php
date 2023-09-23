@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TahunAjar;
+use App\Models\TagihanPerSiswa;
 use App\Imports\ImportExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
@@ -98,14 +99,22 @@ class SiswaController extends Controller
      */
     public function show($id)
     {
-        $siswa = Siswa::where('idSiswa',$id)->first();
+        $siswa = Siswa::with('siswaPerKelas')->where('idSiswa',$id)->first();
         $kelas = Kelas::where('idKelas',$siswa->idKelas)->first();
         $data_kelas = Kelas::get();
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar'])
+                                    ->whereHas('siswaPerKelas', function($query) use ($id) {
+                                                    $query->where('idSiswa', $id);
+                                                })
+                                    ->orderByDESC('idTPS')
+                                    ->paginate(5);
 
         $view_data=[
             'siswa' => $siswa,
             'namaKelas' => $kelas->namaKelas,
-            'kelas' => $data_kelas,
+            'data_kelas' => $data_kelas,
+            'kelas' => $kelas,
+            'tagihan' => $tagihan
         ];
         return view('siswa.detail',$view_data)->with('judul','Siswa');
     }
@@ -116,9 +125,17 @@ class SiswaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function updateKelas($idSiswa, $idSPK, Request $request)
     {
-        //
+        $idKelas = $request->input('kelas');
+        SiswaPerKelas::where('idSPK', $idSPK)->update([
+            'idKelas' => $idKelas
+        ]);
+        Siswa::where('idSiswa', $idSiswa)->update([
+            'idKelas' => $idKelas
+        ]);
+
+        return redirect('/siswa/'.$idSiswa);
     }
 
     /**
@@ -134,7 +151,6 @@ class SiswaController extends Controller
         $nik = $request->input('nik');
         $tanggalLahir = $request->input('tanggalLahir');
         $jenisKelamin = $request->input('jenisKelamin');
-        $idKelas = $request->input('kelas');
         $namaWali = $request->input('waliSiswa');
         $alamat = $request->input('alamat');
         $nomerWali = $request->input('noWali');
@@ -148,7 +164,6 @@ class SiswaController extends Controller
             'nik' => $nik,
             'jenisKelamin' => $jenisKelamin,
             'noHP' => $nomerWali,
-            'idKelas' => $idKelas,
             'alamat' => $alamat,
             'noKIP' => $nomerKIP,
             'namaWali' => $namaWali,

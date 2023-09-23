@@ -158,18 +158,7 @@
                                                 value="{{ $siswa->noHP }}">
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <label for="kelas" class="col-md-4 col-lg-3 col-form-label">Kelas</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <select name="kelas" id="kelas" class="form-control">
-                                                @foreach ($kelas as $value)
-                                                    <option value="{{ $value->idKelas }}"
-                                                        {{ $value->namaKelas == $namaKelas ? 'selected' : '' }}>
-                                                        {{ $value->namaKelas }}</option>
-                                                @endForeach
-                                            </select>
-                                        </div>
-                                    </div>
+
 
                                     <div class="row mb-3">
                                         <label for="waliSiswa" class="col-md-4 col-lg-3 col-form-label">Nama Wali</label>
@@ -194,83 +183,101 @@
 
                             <div class="tab-pane fade pt-3" id="profile-settings">
 
-                                <!-- Settings Form -->
-                                <form>
-
-                                    <div class="row mb-3">
-                                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email
-                                            Notifications</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                                                <label class="form-check-label" for="changesMade">
-                                                    Changes made to your account
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                                                <label class="form-check-label" for="newProducts">
-                                                    Information on new products and services
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="proOffers">
-                                                <label class="form-check-label" for="proOffers">
-                                                    Marketing and promo offers
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="securityNotify"
-                                                    checked disabled>
-                                                <label class="form-check-label" for="securityNotify">
-                                                    Security alerts
-                                                </label>
-                                            </div>
-                                        </div>
+                                <!-- Table with stripped rows -->
+                                <div
+                                    class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                                    <div class="datatable-container">
+                                        <table class="table datatable datatable-table">
+                                            <thead>
+                                                <tr>
+                                                    <th data-sortable="true" style="width: 5%;">#</th>
+                                                    <th data-sortable="true" style="width: 25%;">Nama Tagihan</th>
+                                                    <th data-sortable="true" style="width: 20%;">Nomor Tagihan</th>
+                                                    <th data-sortable="true" style="width: 20%;">Status</th>
+                                                    <th data-sortable="true" style="width: 20%;">Harga Bayar</th>
+                                                    <th data-sortable="true" style="width: 10%;">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php($index = 1)
+                                                @foreach ($tagihan as $value)
+                                                    @php($tahunAjar = $value->siswaPerKelas->tahunAjar->tahun)
+                                                    @php($temp = explode('/', $tahunAjar))
+                                                    @php($tahun = implode('-', $temp))
+                                                    @php($dataNama = $value->siswaPerKelas->siswa->namaSiswa)
+                                                    @php($tempNama = explode(' ', $dataNama))
+                                                    @php($nama = implode('', $tempNama))
+                                                    @php($namaKelas = $value->siswaPerKelas->kelas->namaKelas)
+                                                    <tr data-index="{{ $index }}">
+                                                        <td>{{ $index }}</td>
+                                                        <td>{{ $value->tagihan->namaTagihan->namaTagihan }}</td>
+                                                        <td>{{ $value->noTagihan }}</td>
+                                                        <td>{{ $value->status }}</td>
+                                                        <td>{{ $value->tagihan->hargaBayar }}</td>
+                                                        @if ($value->status == 'Lunas')
+                                                            <td><button class="btn btn-success" id="printPDF"
+                                                                    value="/pdf/{{ $tahun }}/{{ $namaKelas }}/{{ $nama }}.pdf">Print</button>
+                                                            </td>
+                                                        @else
+                                                            <td><a class="btn btn-primary" href="/pembayaran">Bayar</a>
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                                    @php($index++)
+                                                @endForeach
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
+                                <!-- End Table with stripped rows -->
 
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
-                                </form><!-- End settings Form -->
+                                <div class="datatable-bottom">
+                                    {{ $tagihan->links('vendor.pagination.bootstrap-5') }}
+                                </div>
 
                             </div>
 
                             <div class="tab-pane fade pt-3" id="profile-change-password">
-                                <!-- Change Password Form -->
-                                <form>
+                                <!-- Pindah Kelas Form -->
+                                <form action="/siswa/{{ $siswa->idSiswa }}/{{ $siswa->siswaPerKelas[0]->idSPK }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PATCH')
 
                                     <div class="row mb-3">
-                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
-                                            Password</label>
+                                        <label for="namaSiswa" class="col-md-4 col-lg-3 col-form-label">Nama Siswa</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="password" type="password" class="form-control"
-                                                id="currentPassword">
+                                            <input name="nama" type="text" class="form-control"
+                                                value="{{ $siswa->namaSiswa }}" id="namaSiswa" disabled>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
-                                            Password</label>
+                                        <label for="namaKelas" class="col-md-4 col-lg-3 col-form-label">Kelas
+                                            Lama</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="newpassword" type="password" class="form-control"
-                                                id="newPassword">
+                                            <input name="namaKelas" type="text" class="form-control"
+                                                value="{{ $kelas->namaKelas }}" id="namaKelas" disabled>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New
-                                            Password</label>
+                                        <label for="kelas" class="col-md-4 col-lg-3 col-form-label">Kelas</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="renewpassword" type="password" class="form-control"
-                                                id="renewPassword">
+                                            <select name="kelas" id="kelas" class="form-control">
+                                                @foreach ($data_kelas as $value)
+                                                    <option value="{{ $value->idKelas }}"
+                                                        {{ $value->namaKelas == $namaKelas ? 'selected' : '' }}>
+                                                        {{ $value->namaKelas }}</option>
+                                                @endForeach
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                        <button type="submit" class="btn btn-primary">Pindah Kelas</button>
                                     </div>
-                                </form><!-- End Change Password Form -->
+                                </form><!-- End Pindah Kelas Form -->
 
                             </div>
 
@@ -304,5 +311,21 @@
                 }
             })
         }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#printPDF").click(function() {
+                const pdfURL = $(this).val();
+                console.log(pdfURL)
+                // Buka jendela baru dengan URL PDF
+                const newWindow = window.open(pdfURL, '_blank');
+
+                // Tunggu hingga jendela baru selesai memuat PDF
+                newWindow.onload = () => {
+                    // Jalankan perintah mencetak setelah jendela selesai memuat
+                    newWindow.print();
+                };
+            })
+        })
     </script>
 @endsection
