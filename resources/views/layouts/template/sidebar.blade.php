@@ -32,13 +32,13 @@
         <li class="nav-heading">Transaksi</li>
 
         <li class="nav-item">
-            <a class="nav-link {{ $judul == 'Pemayaran' ? '' : 'collapsed' }}" href="/pembayaran">
+            <a class="nav-link {{ $judul == 'Pembayaran' ? '' : 'collapsed' }}" href="/pembayaran">
                 <i class="bi bi-file-ruled"></i><span>Pembayaran</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link {{ $judul == 'TagihanSiswa' ? '' : 'collapsed' }}" href="/TagihanSiswa">
+            <a class="nav-link {{ $judul == 'TagihanSiswa' ? '' : 'collapsed' }}" href="/tagihanPerSiswa">
                 <i class="bi bi-journal-text"></i><span>Tagihan Per Siswa</span>
             </a>
         </li>

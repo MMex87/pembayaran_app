@@ -9,6 +9,7 @@ use App\Http\Controllers\SiswaPerKelasController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\NamaTagihanController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\TagihanPerSiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,3 +71,7 @@ Route::get('pembayaran',[TransaksiController::class, 'index']);
 Route::post('transaksi', [TransaksiController::class, 'store']);
 Route::get('print-nota',[TransaksiController::class, 'printNota']);
 Route::patch('pembayaran/{id}',[TransaksiController::class, 'update']);
+
+
+// Tagihan Per Siswa
+Route::get('tagihanPerSiswa', [TagihanPerSiswaController::class, 'index']);

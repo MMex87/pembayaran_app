@@ -211,7 +211,7 @@ class TransaksiController extends Controller
             // $pdf->SetXY(0, 25);
             $pdf->Cell(0, 5, 'Tanggal: ' . $date, 0, 1, 'L');
             // $pdf->SetXY(0, 30);
-            $pdf->Cell(0, 5, 'Nama: ' . $nama, 0, 1, 'L');
+            $pdf->Cell(0, 5, 'Nama: ' . $dataNama, 0, 1, 'L');
             // $pdf->SetXY(5, 35);
             $pdf->Cell(0, 5, 'Kelas: ' . $kelas, 0, 1, 'L');
             

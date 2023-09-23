@@ -27,11 +27,6 @@ class TagihanPerSiswa extends Model
         return $this->belongsTo(SiswaPerKelas::class,'idSPK');
     }
 
-    // public function tagihan()
-    // {
-    //     return $this->belongsTo(Tagihan::class, 'idTagihan', 'idTagihan');
-    // }
-
     public function tagihan()
     {
         return $this->belongsTo(Tagihan::class, 'idTagihan');
