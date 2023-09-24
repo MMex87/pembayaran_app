@@ -16,9 +16,20 @@ class TagihanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tagihan = Tagihan::with('namaTagihan')->paginate(5);
+        $search = $request->input('searchTagihan');
+
+        $tagihanQuery = Tagihan::with('namaTagihan');
+
+        if($search){
+            $tagihanQuery->whereHas('namaTagihan', function($query) use ($search){
+                $query->where('namaTagihan', 'LIKE', "%$search%");
+            });
+        }
+
+        $tagihan = $tagihanQuery->paginate(10);
+
         $data_view=[
             'tagihan' => $tagihan  
         ];

@@ -19,13 +19,23 @@ class SiswaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = SiswaPerKelas::with(['siswa', 'kelas'])
+        $search = $request->input('searchSiswa');
+        $siswaQuery = SiswaPerKelas::with(['siswa', 'kelas'])
                                 ->join('siswa', 'siswa_per_kelas.idSiswa', '=', 'siswa.idSiswa')
                                 ->where('siswa.status', 'aktif')
-                                ->orderByDesc('siswa.idSiswa')
-                                ->paginate(10);
+                                ->orderByDesc('siswa.idSiswa');
+
+        if($search){
+            $siswaQuery->where(function($query) use ($search) {
+                $query  ->where('namaSiswa', 'LIKE', "%$search%")
+                        ->orWhere('nik', 'LIKE', "%$search%");
+            });
+        }
+
+        $siswa = $siswaQuery->paginate(10);
+
         $view_data=[
             'siswa' => $siswa
         ];

@@ -12,9 +12,15 @@ class NamaTagihanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $namaTagihan = NamaTagihan::paginate(5);
+        $search = $request->input('search');
+        if($search){
+            $namaTagihan = NamaTagihan::where('namaTagihan' , 'LIKE' , "%$search%")->paginate(2);
+        }else{
+            $namaTagihan = NamaTagihan::paginate(2);
+        }
+
         $data_view= [
             'namaTagihan' => $namaTagihan
         ];

@@ -26,8 +26,10 @@
                                 <a href="/tagihan/create" class="btn btn-success">Tambah Tagihan <i
                                         class="bi bi-plus-lg"></i></a>
                                 <div class="datatable-search">
-                                    <input class="datatable-input" placeholder="Search..." type="search"
-                                        title="Search within table">
+                                    <form action="/tagihanPerSiswa" method="get">
+                                        <input class="datatable-input" placeholder="Nama Tagihan & Siswa" type="search"
+                                            title="Search within table" value="{{ request('search') }}" name="search">
+                                    </form>
                                 </div>
                             </div>
                             <div class="datatable-container">
@@ -73,7 +75,7 @@
                                 </table>
                             </div>
                             <div class="datatable-bottom">
-                                {{ $tagihan->links('vendor.pagination.bootstrap-5') }}
+                                {{ $tagihan->appends(['search' => request('search')])->links('vendor.pagination.bootstrap-5') }}
                             </div>
                         </div>
                         <!-- End Table with stripped rows -->

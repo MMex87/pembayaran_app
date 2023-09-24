@@ -31,11 +31,13 @@ Route::get('kelas',[KelasController::class, 'index']);
 Route::get('kelas/create', [KelasController::class, 'create']);
 Route::post('kelas',[KelasController::class,'store']);
 Route::get('kelas/{id}',[KelasController::class,'show']);
+Route::get('kelas/{id}/search',[KelasController::class,'search']);
 Route::get('kelas/{id}/edit',[KelasController::class,'edit']);
 Route::patch('kelas/{id}',[KelasController::class,'update']);
 
 // siswa
 Route::get('siswa',[SiswaController::class, 'index']);
+// Route::get('siswa/search', [SiswaController::class, 'search']);
 Route::get('siswa/create', [SiswaController::class, 'create']);
 Route::post('siswa',[SiswaController::class, 'store']);
 Route::get('siswa/{id}',[SiswaController::class, 'show']);

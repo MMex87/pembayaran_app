@@ -25,8 +25,12 @@
                                 <a href="/siswa/create" class="btn btn-success">Tambah Siswa <i
                                         class="bi bi-plus-lg"></i></a>
                                 <div class="datatable-search">
-                                    <input class="datatable-input" placeholder="Search..." type="search"
-                                        title="Search within table">
+                                    <form action="/siswa" method="GET">
+                                        @csrf
+                                        <input class="datatable-input" placeholder="Search [Nama, NIK]" type="search"
+                                            title="Search within table" name="searchSiswa"
+                                            value="{{ request('searchSiswa') }}">
+                                    </form>
                                 </div>
                             </div>
                             <div class="datatable-container">
@@ -43,25 +47,33 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php($index = 1)
-                                        @foreach ($siswa as $value)
-                                            <tr data-index="{{ $index }}">
-                                                <td>{{ $index }}</td>
-                                                <td>{{ $value->siswa->namaSiswa }}</td>
-                                                <td>{{ $value->siswa->nik }}</td>
-                                                <td>{{ $value->siswa->jenisKelamin }}</td>
-                                                <td>{{ $value->kelas->namaKelas }}</td>
-                                                <td>{{ $value->siswa->namaWali }}</td>
-                                                <td><a href="/siswa/{{ $value->idSiswa }}"
-                                                        class="btn btn-primary">Detail</a></td>
+                                        @if ($siswa->isEmpty())
+                                            <tr>
+                                                <td colspan="7">
+                                                    Tidak ada hasil yang ditemukan.
+                                                </td>
                                             </tr>
-                                            @php($index++)
-                                        @endForeach
+                                        @else
+                                            @php($index = 1)
+                                            @foreach ($siswa as $value)
+                                                <tr data-index="{{ $index }}">
+                                                    <td>{{ $index }}</td>
+                                                    <td>{{ $value->siswa->namaSiswa }}</td>
+                                                    <td>{{ $value->siswa->nik }}</td>
+                                                    <td>{{ $value->siswa->jenisKelamin }}</td>
+                                                    <td>{{ $value->kelas->namaKelas }}</td>
+                                                    <td>{{ $value->siswa->namaWali }}</td>
+                                                    <td><a href="/siswa/{{ $value->idSiswa }}"
+                                                            class="btn btn-primary">Detail</a></td>
+                                                </tr>
+                                                @php($index++)
+                                            @endForeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
                             <div class="datatable-bottom">
-                                {{ $siswa->links('vendor.pagination.bootstrap-5') }}
+                                {{ $siswa->appends(['searchSiswa' => request('searchSiswa')])->links('vendor.pagination.bootstrap-5') }}
                             </div>
                         </div>
                         <!-- End Table with stripped rows -->

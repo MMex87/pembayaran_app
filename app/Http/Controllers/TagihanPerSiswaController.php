@@ -12,12 +12,23 @@ class TagihanPerSiswaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi', 'siswaPerKelas.siswa'])
-                                    ->orderBy('idSPK','ASC')
-                                    ->paginate(10);
+        $search = $request->input('search');
+        
+        $queryTagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi', 'siswaPerKelas.siswa'])
+                                    ->orderBy('idSPK','ASC');
 
+        if($search){
+            $queryTagihan->whereHas('tagihan.namaTagihan',function($query) use ($search){
+                $query->where('namaTagihan','LIKE', "%$search%");
+            });
+            $queryTagihan->orWhereHas('siswaPerKelas.siswa', function($query) use ($search){
+                $query->where('namaSiswa', 'LIKE', "%$search%");
+            });
+        }
+
+        $tagihan = $queryTagihan->paginate(10);
 
         $view_data=[
             'tagihan' => $tagihan
