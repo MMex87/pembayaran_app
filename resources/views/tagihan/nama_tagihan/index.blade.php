@@ -48,12 +48,12 @@
                                             $index = 1;
                                         @endphp
                                         @foreach ($namaTagihan as $value)
-                                            <tr data-index="{{ $index }}" id="col-data">
+                                            <tr data-index="{{ $index }}" id="col-data-{{ $value->idNamaTagihan }}">
                                                 <td>{{ $index }}</td>
                                                 <td>{{ $value->namaTagihan }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-evenly">
-                                                        <a onclick="btnEdit('{{ $value->namaTagihan }}')"
+                                                        <a onclick="btnEdit('{{ $value->namaTagihan }}','{{ $value->idNamaTagihan }}')"
                                                             class="btn btn-warning">Edit</a>
                                                         <form action="namaTagihan/{{ $value->idNamaTagihan }}"
                                                             method="POST" id="deleteForm{{ $value->idNamaTagihan }}">
@@ -66,19 +66,22 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr data-index="{{ $index }}" id="col-update" style="display: none;">
+                                            <tr data-index="{{ $index }}"
+                                                id="col-update-{{ $value->idNamaTagihan }}" style="display: none;">
                                                 <form action="/namaTagihan/{{ $value->idNamaTagihan }}" method="POST">
                                                     @method('PATCH')
                                                     @csrf
                                                     <td>{{ $index }}</td>
                                                     <td>
-                                                        <input type="text" class="form-control" id="namaTagihan"
+                                                        <input type="text" class="form-control"
+                                                            id="namaTagihan-{{ $value->idNamaTagihan }}"
                                                             name="namaTagihan">
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-evenly">
                                                             <button type="submit" class="btn btn-primary">Save</button>
-                                                            <a onclick="btnBack()" class="btn btn-warning">back</a>
+                                                            <a onclick="btnBack('{{ $value->idNamaTagihan }}')"
+                                                                class="btn btn-warning">back</a>
                                                         </div>
                                                     </td>
                                                 </form>
@@ -104,16 +107,16 @@
 
 
     <script>
-        function btnEdit(namaTagihan) {
-            document.getElementById('col-data').style.display = 'none';
-            document.getElementById('col-update').style.display = '';
-            document.getElementById('namaTagihan').value = namaTagihan;
+        function btnEdit(namaTagihan, idNamaTagihan) {
+            document.getElementById(`col-data-${idNamaTagihan}`).style.display = 'none';
+            document.getElementById(`col-update-${idNamaTagihan}`).style.display = '';
+            document.getElementById(`namaTagihan-${idNamaTagihan}`).value = namaTagihan;
         }
 
-        function btnBack() {
-            document.getElementById('col-data').style.display = '';
-            document.getElementById('col-update').style.display = 'none';
-            document.getElementById('namaTagihan').value = '';
+        function btnBack(idNamaTagihan) {
+            document.getElementById(`col-data-${idNamaTagihan}`).style.display = '';
+            document.getElementById(`col-update-${idNamaTagihan}`).style.display = 'none';
+            document.getElementById(`namaTagihan-${idNamaTagihan}`).value = '';
         }
 
         function confirmDelete(id) {

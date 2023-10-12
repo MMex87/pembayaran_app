@@ -1,6 +1,6 @@
 @extends('layouts.template')
 
-@section('title', 'Kelas {{ $kelas->namaKelas }}')
+@section('title', 'Kelas ' . $kelas->namaKelas)
 
 @section('main')
     <div class="pagetitle">
