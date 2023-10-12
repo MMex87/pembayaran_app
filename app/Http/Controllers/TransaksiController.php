@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Alert;
 use PDF;
 use View;
@@ -283,5 +284,31 @@ class TransaksiController extends Controller
         } else {
             return 'Tagihan tidak ditemukan';
         }
+    }
+
+    public function validation(Request $request)
+    {
+        $rules = [
+            'namaTagihan' => 'required',
+            'siswa' => 'required|exists:App\Models\Siswa,namaSiswa',
+            'kelas' => 'required',
+        ];
+
+        $messages = [
+            'namaTagihan.required' => 'Nama Tagihan wajib diisi.',
+            'siswa.required' => 'Siswa wajib diisi.',
+            'siswa.exists' => 'Nama Siswa tidak ada di dalam Database.',
+            'kelas.required' => 'Kelas wajib diisi.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        return response()->json(['success' => 'Formulir valid.']); // Jika validasi berhasil
+
     }
 }

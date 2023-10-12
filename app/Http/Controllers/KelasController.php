@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use Illuminate\Support\Facades\Validator;
+
 
 class KelasController extends Controller
 {
@@ -169,6 +171,36 @@ class KelasController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function validation(Request $request)
+    {
+        $rules = [
+            'namaKelas' => 'required|max:2|alpha_num|uppercase|unique:App\Models\Kelas,namaKelas',
+            'waliKelas' => 'required|max:255',
+            'emailWaliKelas' => 'required|email',
+        ];
+
+        $messages = [
+            'namaKelas.required' => 'Nama kelas wajib diisi.',
+            'namaKelas.max' => 'Nama kelas tidak di spasi',
+            'namaKelas.alpha_num' => 'Nama Kelas harus dari angka dan alfabet - Ex: 1A',
+            'namaKelas.uppercase' => 'Nama Kelas harus huruf Capital',
+            'namaKelas.unique' => 'Nama Kelas sudah ada.',
+            'waliKelas.required' => 'Nama wali kelas wajib diisi.',
+            'emailWaliKelas.required' => 'Email wali kelas wajib diisi.',
+            'emailWaliKelas.email' => 'Format email tidak valid.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        return response()->json(['success' => 'Formulir valid.']); // Jika validasi berhasil
+
     }
 
 }

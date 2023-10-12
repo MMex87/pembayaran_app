@@ -19,10 +19,11 @@ return new class extends Migration
             $table->string('namaSiswa');
             $table->string('nik');
             $table->string('jenisKelamin');
-            $table->string('noHP');
+            $table->date('tanggalLahir')->default('2000-01-01');
+            $table->string('noHP')->nullable();
             $table->string('alamat');
             $table->string('status');
-            $table->string('noKIP');
+            $table->string('noKIP')->nullable();
             $table->string('namaWali');
             $table->softDeletes();
 

@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="kelas" class="form-label">Kelas</label>
-                            <select name="kelas" id="kelas" class="form-control">
+                            <select name="kelas" id="kelas" class="form-control" required>
                                 <option value="">-- Pilih Kelas --</option>
                                 @foreach ($kelas as $item)
                                     <option
@@ -63,15 +63,17 @@
                                         value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
                                 @endforeach
                             </select>
+                            <div id="error-kelas" class="text-danger"></div>
                         </div>
                         <div class="col-md-6">
                             <label for="siswa" class="form-label">Siswa</label>
-                            <input type="text" class="form-control" id="siswa" name="siswa"
+                            <input type="text" class="form-control" id="siswa" name="siswa" required
                                 @if ($tagihan->isNotEmpty()) value="{{ $tagihan[0]->siswaPerKelas->siswa->namaSiswa }}" @endif>
+                            <div id="error-siswa" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="namaTagihan" class="form-label">Nama Tagihan</label>
-                            <select name="namaTagihan" id="namaTagihan" class="form-control">
+                            <select name="namaTagihan" id="namaTagihan" class="form-control" required>
                                 <option value="">-- Pilih Tagihan --</option>
                                 @if ($tagihan->isNotEmpty())
                                     @foreach ($daftarTagihan as $val)
@@ -80,13 +82,14 @@
                                     @endforeach
                                 @endif
                             </select>
+                            <div id="error-namaTagihan" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="totalBayar" class="form-label">Nominal Yang Di Bayar</label>
                             <input type="text" class="form-control" id="totalBayar" name="totalBayar" disabled>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Tambah</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Tambah</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </form><!-- End Multi Columns Form -->
@@ -361,6 +364,81 @@
             })
         </script>
     @endif
+
+    <script>
+        $(document).ready(function() {
+            $('input[name = "siswa"]')
+                .on('blur ', function() {
+                    var fieldName = $(this).attr('name');
+                    var fieldValue = $(this).val();
+
+                    var data = {};
+                    data[fieldName] = fieldValue;
+
+                    $.ajax({
+                        url: '/transaksiValidasi',
+                        type: 'POST',
+                        data: data,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.errors && response.errors[fieldName]) {
+                                $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                            } else {
+                                $('#error-' + fieldName).text('');
+                            }
+                            // Cek apakah ada pesan kesalahan lain
+                            var hasErrors = $('div[id^="error-"]').filter(function() {
+                                return $(this).text().length > 0;
+                            }).length > 0;
+
+                            // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                            $('#submitBtn').prop('disabled', hasErrors);
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.error(xhr);
+                        }
+                    });
+                });
+
+            // Validasi Select
+            $('select[name="namaTagihan"],select[name="kelas"]').on('change blur', function() {
+                var fieldName = $(this).attr('name');
+                var fieldValue = $(this).val();
+
+                var data = {};
+                data[fieldName] = fieldValue;
+
+                $.ajax({
+                    url: '/transaksiValidasi',
+                    type: 'POST',
+                    data: data,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.errors && response.errors[fieldName]) {
+                            $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                        } else {
+                            $('#error-' + fieldName).text('');
+                        }
+
+                        // Cek apakah ada pesan kesalahan lain
+                        var hasErrors = $('div[id^="error-"]').filter(function() {
+                            return $(this).text().length > 0;
+                        }).length > 0;
+
+                        // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                        $('#submitBtn').prop('disabled', hasErrors);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error(xhr);
+                    }
+                });
+            });
+        });
+    </script>
 
 
 @endsection

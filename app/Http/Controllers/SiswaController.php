@@ -11,6 +11,7 @@ use App\Models\TagihanPerSiswa;
 use App\Imports\ImportExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class SiswaController extends Controller
 {
@@ -217,5 +218,47 @@ class SiswaController extends Controller
         // Session::flash('successExcel', 'Data Import Siswa Berhasil Tersimpan');
 
         return redirect()->back()->with('successExcel', 'Data Import Siswa Berhasil Tersimpan');
+    }
+
+    public function validation(Request $request)
+    {
+        $rules = [
+            'namaSiswa' => 'required|max:255|uppercase',
+            'nik' => 'required|min_digits:16|max_digits:16',
+            'tanggalLahir' => 'required',
+            'jenisKelamin' => 'required',
+            'kelas' => 'required',
+            'kelasExcel' => 'required',
+            'alamat' => 'required',
+            'waliSiswa' => 'required|max:255',
+            'inputExcel' => 'required'
+        ];
+
+        $messages = [
+            'namaSiswa.required' => 'Nama Siswa wajib diisi.',
+            'namaSiswa.max' => 'Nama Siswa terlalu panjang.',
+            'namaSiswa.uppercase' => 'Nama Siswa harus huruf Capital.',
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.max_digits' => 'NIK lebih dari 16 digit.',
+            'nik.min_digits' => 'NIK kurang dari 16 digit.',
+            'tanggalLahir.required' => 'Tanggal Lahir Siswa wajib diisi.',
+            'jenisKelamin.required' => 'Jenis Kelamin Siswa wajib diisi.',
+            'kelas.required' => 'Kelas Siswa wajib diisi.',
+            'kelasExcel.required' => 'Kelas Siswa wajib diisi.',
+            'alamat.required' => 'Alamat wajib diisi.',
+            'waliSiswa.required' => 'Nama Wali wajib diisi.',
+            'waliSiswa.max' => 'Nama Wali terlalu panjang.',
+            'inputExcel.required' => 'Upload excel wajib diisi'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        return response()->json(['success' => 'Formulir valid.']); // Jika validasi berhasil
+
     }
 }

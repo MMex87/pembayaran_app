@@ -114,7 +114,8 @@
                                         <label for="namaSiswa" class="col-md-4 col-lg-3 col-form-label">Nama</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="namaSiswa" type="text" class="form-control" id="namaSiswa"
-                                                value="{{ $siswa->namaSiswa }}">
+                                                required value="{{ $siswa->namaSiswa }}">
+                                            <div id="error-namaSiswa" class="text-danger"></div>
                                         </div>
                                     </div>
 
@@ -122,7 +123,8 @@
                                         <label for="nik" class="col-md-4 col-lg-3 col-form-label">NIK</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="nik" type="text" class="form-control" id="nik"
-                                                value="{{ $siswa->nik }}">
+                                                required value="{{ $siswa->nik }}">
+                                            <div id="error-nik" class="text-danger"></div>
                                         </div>
                                     </div>
 
@@ -130,8 +132,9 @@
                                         <label for="tanggalLahir" class="col-md-4 col-lg-3 col-form-label">Tanggal
                                             Lahir</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="tanggalLahir" type="date" class="form-control" id="tanggalLahir"
-                                                value="{{ $siswa->tanggalLahir }}">
+                                            <input name="tanggalLahir" type="date" class="form-control" required
+                                                id="tanggalLahir" value="{{ $siswa->tanggalLahir }}">
+                                            <div id="error-tanggalLahir" class="text-danger"></div>
                                         </div>
                                     </div>
 
@@ -139,8 +142,9 @@
                                         <label for="jenisKelamin" class="col-md-4 col-lg-3 col-form-label">Jenis
                                             Kelamin</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="jenisKelamin" type="text" class="form-control"
+                                            <input name="jenisKelamin" type="text" class="form-control" required
                                                 id="jenisKelamin" value="{{ $siswa->jenisKelamin }}">
+                                            <div id="error-jenisKelamin" class="text-danger"></div>
                                         </div>
                                     </div>
 
@@ -149,34 +153,35 @@
                                         <div class="col-md-8 col-lg-9">
                                             <textarea name="alamat" class="form-control" id="alamat" style="height: 100px">{{ $siswa->alamat }}</textarea>
                                         </div>
+                                        <div id="error-alamat" class="text-danger"></div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label for="noWali" class="col-md-4 col-lg-3 col-form-label">No HP Wali</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="noWali" type="text" class="form-control" id="noWali"
-                                                value="{{ $siswa->noHP }}">
+                                                required value="{{ $siswa->noHP }}">
                                         </div>
                                     </div>
-
-
                                     <div class="row mb-3">
                                         <label for="waliSiswa" class="col-md-4 col-lg-3 col-form-label">Nama Wali</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="waliSiswa" type="text" class="form-control" id="waliSiswa"
-                                                value="{{ $siswa->namaWali }}">
+                                                required value="{{ $siswa->namaWali }}">
                                         </div>
+                                        <div id="error-waliSiswa" class="text-danger"></div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label for="noKIP" class="col-md-4 col-lg-3 col-form-label">Nomer KIP</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="noKIP" type="text" class="form-control" id="noKIP"
-                                                value="{{ $siswa->noKIP }}">
+                                                required value="{{ $siswa->noKIP }}">
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                        <button type="submit" class="btn btn-primary" disabled id="submitBtn">Simpan
+                                            Perubahan</button>
                                     </div>
                                 </form><!-- End Profile Edit Form -->
                             </div>
@@ -327,5 +332,45 @@
                 };
             })
         })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('input[name = "namaSiswa"], input[name = "nik"], input[name = "tanggalLahir"], input[name =' +
+                    '"jenisKelamin"], input[name = "kelas"], textarea[name = "alamat"], input[name = "waliSiswa"]'
+                )
+                .on('blur ', function() {
+                    var fieldName = $(this).attr('name');
+                    var fieldValue = $(this).val();
+
+                    var data = {};
+                    data[fieldName] = fieldValue;
+
+                    $.ajax({
+                        url: '/siswaValidasi',
+                        type: 'POST',
+                        data: data,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.errors && response.errors[fieldName]) {
+                                $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                            } else {
+                                $('#error-' + fieldName).text('');
+                            }
+                            // Cek apakah ada pesan kesalahan lain
+                            var hasErrors = $('div[id^="error-"]').filter(function() {
+                                return $(this).text().length > 0;
+                            }).length > 0;
+
+                            // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                            $('#submitBtn').prop('disabled', hasErrors);
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.error(xhr);
+                        }
+                    });
+                });
+        });
     </script>
 @endsection

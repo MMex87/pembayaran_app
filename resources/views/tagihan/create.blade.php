@@ -30,6 +30,7 @@
                                     <option value="{{ $item->idNamaTagihan }}">{{ $item->namaTagihan }}</option>
                                 @endforeach
                             </select>
+                            <div id="error-namaTagihan" class="text-danger"></div>
                             <div id="tagihanHelp" class="form-text">Jika Tagihan tidak ada, klik <a
                                     href="/namaTagihan">Tambah Tagihan</a></div>
                         </div>
@@ -37,14 +38,18 @@
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control" id="tanggalMulai" name="tanggalMulai"
                                 value="{{ now()->format('Y-m-d') }}">
+                            <div id="error-tanggalMulai" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
-                            <input type="date" class="form-control" id="tanggalSelesai" name="tanggalSelesai">
+                            <input type="date" class="form-control" value="{{ now()->format('Y-m-d') }}"
+                                id="tanggalSelesai" name="tanggalSelesai">
+                            <div id="error-tanggalSelesai" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="hargaBayar" class="form-label">Harga Bayar</label>
                             <input type="number" class="form-control" id="hargaBayar" name="hargaBayar">
+                            <div id="error-hargaBayar" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="status" class="form-label">Status Aktif</label>
@@ -52,6 +57,7 @@
                                 <option value="aktif">Aktif</option>
                                 <option value="tidak aktif">Tidak Aktif</option>
                             </select>
+                            <div id="error-status" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="kelas" class="form-label">Kelas</label>
@@ -88,8 +94,8 @@
                                     </td>
                                     <td>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input checkKelas" type="checkbox" name="checkKelas[]"
-                                                id="checkKelas4" value="4">
+                                            <input class="form-check-input checkKelas" type="checkbox"
+                                                name="checkKelas[]" id="checkKelas4" value="4">
                                             <label class="form-check-label" for="checkKelas4">Kelas 4</label>
                                         </div>
                                     </td>
@@ -111,9 +117,10 @@
                                 <tr>
                                 </tr>
                             </table>
+                            <div id="error-checkKelas" class="text-danger"></div>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </form><!-- End Multi Columns Form -->
@@ -140,6 +147,102 @@
                         checkAll.disabled = true;
                     } else {
                         checkAll.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('input[name = "hargaBayar"], input[name = "tanggalSelesai"], input[name = "tanggalMulai"]')
+                .on('blur ', function() {
+                    var fieldName = $(this).attr('name');
+                    var fieldValue = $(this).val();
+
+                    var data = {};
+                    data[fieldName] = fieldValue;
+
+                    $.ajax({
+                        url: '/tagihanValidasi',
+                        type: 'POST',
+                        data: data,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.errors && response.errors[fieldName]) {
+                                $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                            } else {
+                                $('#error-' + fieldName).text('');
+                            }
+                            // Cek apakah ada pesan kesalahan lain
+                            var hasErrors = $('div[id^="error-"]').filter(function() {
+                                return $(this).text().length > 0;
+                            }).length > 0;
+
+                            // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                            $('#submitBtn').prop('disabled', hasErrors);
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.error(xhr);
+                        }
+                    });
+                });
+
+            // validasi checkbox
+            $('input[name="checkKelas[]"]').on('change', function() {
+                var hasChecked = $('input[name="checkKelas[]"]:checked').length > 0;
+                $('#error-checkKelas').text(hasChecked ? '' : 'Pilih setidaknya satu kelas.');
+                var hasErrors = $('div[id^="error-"]').filter(function() {
+                    return $(this).text().length > 0;
+                }).length > 0;
+                $('#submitBtn').prop('disabled', hasErrors || !hasChecked);
+            });
+
+            // validasi all checkbox
+            $('input[name="allCheckKelas"]').on('change', function() {
+                var hasChecked = $('input[name="allCheckKelas"]:checked').length > 0;
+                $('#error-checkKelas').text(hasChecked ? '' : 'Pilih setidaknya satu kelas.');
+                var hasErrors = $('div[id^="error-"]').filter(function() {
+                    return $(this).text().length > 0;
+                }).length > 0;
+                $('#submitBtn').prop('disabled', hasErrors || !hasChecked);
+            });
+
+
+            // Validasi Select
+            $('select[name="namaTagihan"],select[name="status"]').on('change blur', function() {
+                var fieldName = $(this).attr('name');
+                var fieldValue = $(this).val();
+
+                var data = {};
+                data[fieldName] = fieldValue;
+
+                $.ajax({
+                    url: '/tagihanValidasi',
+                    type: 'POST',
+                    data: data,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.errors && response.errors[fieldName]) {
+                            $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                        } else {
+                            $('#error-' + fieldName).text('');
+                        }
+
+                        // Cek apakah ada pesan kesalahan lain
+                        var hasErrors = $('div[id^="error-"]').filter(function() {
+                            return $(this).text().length > 0;
+                        }).length > 0;
+
+                        // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                        $('#submitBtn').prop('disabled', hasErrors);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error(xhr);
                     }
                 });
             });

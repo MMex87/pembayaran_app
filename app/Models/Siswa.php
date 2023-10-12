@@ -15,15 +15,15 @@ class Siswa extends Model
 
     public $fillable = [
         'namaSiswa',
-            'tanggalLahir' ,
-            'nik',
-            'jenisKelamin',
-            'noHP',
-            'alamat',
-            'idKelas',
-            'noKIP',
-            'namaWali',
-            'status'
+        'tanggalLahir',
+        'nik',
+        'jenisKelamin',
+        'noHP',
+        'alamat',
+        'idKelas',
+        'noKIP',
+        'namaWali',
+        'status'
     ];
 
 

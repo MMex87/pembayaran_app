@@ -32,6 +32,7 @@
                                         {{ $item->namaTagihan }}</option>
                                 @endforeach
                             </select>
+                            <div id="error-namaTagihan" class="text-danger"></div>
                             <div id="tagihanHelp" class="form-text">Jika Tagihan tidak ada, klik <a
                                     href="/namaTagihan">Tambah Tagihan</a></div>
                         </div>
@@ -39,16 +40,19 @@
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control" id="tanggalMulai" name="tanggalMulai"
                                 value="{{ $tagihan->tanggalMulai }}">
+                            <div id="error-tanggalMulai" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
                             <input type="date" class="form-control" id="tanggalSelesai" name="tanggalSelesai"
                                 value="{{ $tagihan->tanggalSelesai }}">
+                            <div id="error-tanggalSelesai" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="hargaBayar" class="form-label">Harga Bayar</label>
                             <input type="number" class="form-control" id="hargaBayar" name="hargaBayar"
                                 value="{{ $tagihan->hargaBayar }}">
+                            <div id="error-hargaBayar" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="status" class="form-label">Status Aktif</label>
@@ -56,6 +60,7 @@
                                 <option value="aktif" @selected($tagihan->status == 'aktif')>Aktif</option>
                                 <option value="tidak aktif" @selected($tagihan->status == 'tidak aktif')>Tidak Aktif</option>
                             </select>
+                            <div id="error-status" class="text-danger"></div>
                         </div>
                         {{-- <div class="col-md-12">
                             <label for="kelas" class="form-label">Kelas</label>
@@ -176,5 +181,79 @@
                 // });
             });
         })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('input[name = "hargaBayar"], input[name = "tanggalSelesai"], input[name = "tanggalMulai"]')
+                .on('blur ', function() {
+                    var fieldName = $(this).attr('name');
+                    var fieldValue = $(this).val();
+
+                    var data = {};
+                    data[fieldName] = fieldValue;
+
+                    $.ajax({
+                        url: '/tagihanValidasi',
+                        type: 'POST',
+                        data: data,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.errors && response.errors[fieldName]) {
+                                $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                            } else {
+                                $('#error-' + fieldName).text('');
+                            }
+                            // Cek apakah ada pesan kesalahan lain
+                            var hasErrors = $('div[id^="error-"]').filter(function() {
+                                return $(this).text().length > 0;
+                            }).length > 0;
+
+                            // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                            $('#submitBtn').prop('disabled', hasErrors);
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.error(xhr);
+                        }
+                    });
+                });
+
+            // Validasi Select
+            $('select[name="namaTagihan"],select[name="status"]').on('change blur', function() {
+                var fieldName = $(this).attr('name');
+                var fieldValue = $(this).val();
+
+                var data = {};
+                data[fieldName] = fieldValue;
+
+                $.ajax({
+                    url: '/tagihanValidasi',
+                    type: 'POST',
+                    data: data,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.errors && response.errors[fieldName]) {
+                            $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                        } else {
+                            $('#error-' + fieldName).text('');
+                        }
+
+                        // Cek apakah ada pesan kesalahan lain
+                        var hasErrors = $('div[id^="error-"]').filter(function() {
+                            return $(this).text().length > 0;
+                        }).length > 0;
+
+                        // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                        $('#submitBtn').prop('disabled', hasErrors);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error(xhr);
+                    }
+                });
+            });
+        });
     </script>
 @endsection

@@ -8,6 +8,8 @@ use App\Models\TahunAjar;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ImportExcel implements ToCollection, WithHeadingRow
 {
@@ -17,11 +19,16 @@ class ImportExcel implements ToCollection, WithHeadingRow
     {
         $tahunAjar = TahunAjar::orderByDESC('idTahunAjar')->first();
         foreach ($rows as $row) {
+            
+            $excelDate = Date::excelToDateTimeObject($row['tanggallahir']);
+            $tanggalLahir = $excelDate->format('Y-m-d');
+
             if($row['namasiswa'] != null){
                 $siswa = Siswa::create([
                     'namaSiswa' => $row['namasiswa'],
                     'nik' => $row['nik'],
                     'jenisKelamin' => $row['jeniskelamin'],
+                    'tanggalLahir' => $tanggalLahir,
                     'noHP' => $row['nohp'],
                     'alamat' => $row['alamat'],
                     'noKIP' => $row['nokip'] == null ? '' : $row['nokip'],

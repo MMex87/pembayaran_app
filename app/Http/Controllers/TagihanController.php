@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TagihanPerSiswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TagihanController extends Controller
 {
@@ -424,5 +425,39 @@ class TagihanController extends Controller
         $tagihan = Tagihan::where('idTagihan', $idTagihan)
                             ->first();
         return response()->json($tagihan);
+    }
+
+    public function validation(Request $request)
+    {
+        $rules = [
+            'namaTagihan' => 'required',
+            'tanggalMulai' => 'required',
+            'tanggalSelesai' => 'required',
+            'hargaBayar' => 'required|numeric',
+            'status' => 'required',
+            'checkKelas' => 'required',
+            'allCheckKelas' => 'required'
+        ];
+
+        $messages = [
+            'namaTagihan.required' => 'Nama Tagihan wajib diisi.',
+            'tanggalMulai.required' => 'Tanggal Mulai wajib diisi.',
+            'tanggalSelesai.required' => 'Tanggal Selesai wajib diisi.',
+            'hargaBayar.required' => 'Harga Bayar wajib diisi.',
+            'hargaBayar.numeric' => 'Inputan harus bersisi Angka.',
+            'status.required' => 'Status wajib diisi.',
+            'checkKelas.required' => 'Kelas wajib diisi.',
+            'allCheckKelas.required' => 'Kelas wajib diisi'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        return response()->json(['success' => 'Formulir valid.']); // Jika validasi berhasil
+
     }
 }
