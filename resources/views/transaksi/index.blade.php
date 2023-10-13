@@ -347,6 +347,18 @@
         </script>
     @endif
 
+    @if (Session::has('gagal-email'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ Session::get('gagal-email') }}',
+                    icon: 'error'
+                });
+            });
+        </script>
+    @endif
+
     @if (Session::has('print'))
         <script>
             $(document).ready(function() {

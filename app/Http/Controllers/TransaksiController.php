@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PembayaranSekolahEmail;
 use Alert;
 use PDF;
 use View;
@@ -175,7 +177,7 @@ class TransaksiController extends Controller
     public function printNota()
     {
         $date = date('d-m-Y');
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar','siswaPerKelas.kelas'])
                                     ->where('status','Cart')
                                     ->get();
 
@@ -280,6 +282,27 @@ class TransaksiController extends Controller
             // Simpan atau kirimkan PDF sebagai respons
             Session::flash('print', 'pdf/'.$tahun.'/'.$kelas.'/'.$nama.'.pdf');
             Session::flash('successBayar', 'Pembayaran Berhasil');
+
+            sleep(5);
+
+            try {
+                // Kirim email
+                $receiverEmail = $tagihan[0]->siswaPerKelas->kelas->emailWaliKelas;
+                $receiverName = $tagihan[0]->siswaPerKelas->kelas->waliKelas; 
+    
+                $data = [
+                    'namaSiswa' => $tagihan[0]->siswaPerKelas->siswa->namaSiswa,
+                    'tagihan' => $tagihan, // Ganti dengan jumlah tagihan yang sesuai// Ganti dengan tanggal batas pembayaran yang sesuai
+                ];
+    
+                $pdfAttachmentPath = public_path('pdf/'.$tahun.'/'.$kelas.'/'.$nama.'.pdf'); // Ganti dengan lokasi file PDF faktur/tagihan
+                
+                Mail::to($receiverEmail)->send(new PembayaranSekolahEmail($data, $pdfAttachmentPath, $receiverName));
+            } catch (\Throwable $th) {
+                // Simpan atau kirimkan PDF sebagai respons
+                Session::flash('gagal-email', $th->getMessage());
+            }
+
             return redirect('pembayaran');
         } else {
             return 'Tagihan tidak ditemukan';
@@ -311,4 +334,6 @@ class TransaksiController extends Controller
         return response()->json(['success' => 'Formulir valid.']); // Jika validasi berhasil
 
     }
+
+    
 }

@@ -93,7 +93,7 @@ class SiswaController extends Controller
         $tahunAjar = TahunAjar::orderByDESC('idTahunAjar')->first();
 
         SiswaPerKelas::create([
-            'idSiswa' => $siswa->id,
+            'idSiswa' => $siswa->idSiswa,
             'idTahunAjar' => $tahunAjar->idTahunAjar,
             'idKelas' => $idKelas
         ]);
