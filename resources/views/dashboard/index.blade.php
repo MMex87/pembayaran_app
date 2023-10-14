@@ -133,6 +133,92 @@
 
                     </div><!-- End Customers Card -->
 
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i
+                                        class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+
+                                    <li><a class="dropdown-item" href="#">Today</a></li>
+                                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title">Tahun Ajar</h5>
+                                <div
+                                    class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                                    <div class="datatable-top">
+                                        @if ($handleTambah == true)
+                                            <form action="/tahunAjar" method="POST">
+                                                @csrf
+                                                {{-- <input type="hidden" name="tahun" value="K5VDWiL9VYTM9z2urtCOUXP3r4k9E6jBr2IXKiuX"> --}}
+                                                <button type="submit"class="btn btn-success">Tambah Tahun Ajar <i
+                                                        class="bi bi-plus-lg"></i></button>
+                                            </form>
+                                        @endif
+                                        <div class="datatable-search">
+                                            <form action="/" method="GET">
+                                                @csrf
+                                                <input class="datatable-input" placeholder="Search [Tahun]"
+                                                    type="search" title="Search within table"
+                                                    value="{{ request('searchTahun') }}" name="searchTahun">
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="datatable-container">
+                                        <table class="table table-borderless datatable datatable-table">
+                                            <thead>
+                                                <tr>
+                                                    <th data-sortable="true" style="width: 15%;">#</th>
+                                                    <th data-sortable="true" style="width: 35%;">Tahun</th>
+                                                    <th data-sortable="true" style="width: 30%;">Status</th>
+                                                    <th data-sortable="true" style="width: 20%;">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @php($index = 1)
+                                                @foreach ($tahunAjar as $val)
+                                                    <tr data-index="{{ $index }}">
+                                                        <td>{{ $index }}</td>
+                                                        <td>{{ $val->tahun }}</td>
+                                                        <td>{{ $val->aktif == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                                        @if ($val->aktif == 1)
+                                                            <td>Aktif</td>
+                                                        @else
+                                                            <td>
+                                                                <form action="/tahunAjar/{{ $val->idTahunAjar }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <input type="hidden" name="aktif"
+                                                                        value="{{ true }}">
+                                                                    <button class="btn btn-success">Aktifkan</button>
+                                                                </form>
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                                    @php($index++)
+                                                @endForeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="datatable-bottom">
+                                        {{ $tahunAjar->appends(['searchTahun' => request('searchTahun')])->links('vendor.pagination.bootstrap-5') }}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- End Left side columns -->
 

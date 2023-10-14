@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('tahun_ajar', function (Blueprint $table) {
             $table->id('idTahunAjar');
             $table->string('tahun');
+            $table->boolean('aktif');
             $table->softDeletes();
         });
     }

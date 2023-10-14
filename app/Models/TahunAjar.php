@@ -15,6 +15,7 @@ class TahunAjar extends Model
     public $fillable =[
         'tahun',
         'semester',
+        'aktif'
     ];
 
     public function siswaPerKelas()

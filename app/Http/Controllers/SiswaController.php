@@ -90,7 +90,7 @@ class SiswaController extends Controller
             'status' => 'aktif'
         ]);
         
-        $tahunAjar = TahunAjar::orderByDESC('idTahunAjar')->first();
+        $tahunAjar = TahunAjar::where('aktif', true)->first();
 
         SiswaPerKelas::create([
             'idSiswa' => $siswa->idSiswa,

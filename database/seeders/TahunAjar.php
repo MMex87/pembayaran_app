@@ -25,6 +25,7 @@ class TahunAjar extends Seeder
 
         DB::table('tahun_ajar')->insert([
             'tahun' => $tahun,
+            'aktif' => true
         ]);
     }
 }

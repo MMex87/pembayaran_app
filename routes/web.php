@@ -25,6 +25,8 @@ use App\Http\Controllers\TagihanPerSiswaController;
 
 // dashboard
 Route::get('/',[DashboardController::class, 'index']);
+Route::post('/tahunAjar', [DashboardController::class, 'store']);
+Route::Patch('/tahunAjar/{id}', [DashboardController::class, 'update']);
 
 // kelas
 Route::get('kelas',[KelasController::class, 'index']);
