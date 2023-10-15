@@ -16,8 +16,10 @@ class TagihanPerSiswaController extends Controller
     {
         $search = $request->input('search');
         
-        $queryTagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi', 'siswaPerKelas.siswa'])
-                                    ->orderBy('idSPK','ASC');
+        $queryTagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi', 'siswaPerKelas.siswa','tahunAjar'])
+                                    ->whereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    });
 
         if($search){
             $queryTagihan->whereHas('tagihan.namaTagihan',function($query) use ($search){
@@ -28,7 +30,7 @@ class TagihanPerSiswaController extends Controller
             });
         }
 
-        $tagihan = $queryTagihan->paginate(10);
+        $tagihan = $queryTagihan->orderBy('idSPK','ASC')->paginate(10);
 
         $view_data=[
             'tagihan' => $tagihan

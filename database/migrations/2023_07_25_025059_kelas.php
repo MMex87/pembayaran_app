@@ -20,7 +20,13 @@ return new class extends Migration
             $table->string('waliKelas');
             $table->string('namaKelas');
             $table->softDeletes();
+
+            //relasi table tahun ajar
+            $table->unsignedBigInteger('idTahunAjar');
+            $table->foreign('idTahunAjar')->references('idTahunAjar')->on('tahun_ajar');
         });
+
+
     }
 
     /**

@@ -27,6 +27,10 @@ return new class extends Migration
             $table->unsignedBigInteger('idSPK');
             $table->foreign('idSPK')->references('idSPK')->on('siswa_per_kelas');
 
+            //relasi table tahun ajar
+            $table->unsignedBigInteger('idTahunAjar');
+            $table->foreign('idTahunAjar')->references('idTahunAjar')->on('tahun_ajar');
+
             $table->timestamps();
         });
     }

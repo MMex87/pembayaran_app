@@ -23,7 +23,10 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('searchSiswa');
-        $siswaQuery = SiswaPerKelas::with(['siswa', 'kelas'])
+        $siswaQuery = SiswaPerKelas::with(['siswa', 'kelas','tahunAjar'])
+                                ->whereHas('tahunAjar', function($query){
+                                    $query->where('aktif',true);
+                                })
                                 ->join('siswa', 'siswa_per_kelas.idSiswa', '=', 'siswa.idSiswa')
                                 ->where('siswa.status', 'aktif')
                                 ->orderByDesc('siswa.idSiswa');
@@ -51,7 +54,11 @@ class SiswaController extends Controller
      */
     public function create()
     {
-        $kelas = Kelas::get();
+        $kelas = Kelas::with('tahunAjar')
+                            ->whereHas('tahunAjar', function($query){
+                                $query->where('aktif', true);
+                            })->get();
+
         $view_data=[
             'kelas' => $kelas
         ];
@@ -110,13 +117,24 @@ class SiswaController extends Controller
      */
     public function show($id)
     {
-        $siswa = Siswa::with('siswaPerKelas')->where('idSiswa',$id)->first();
-        $kelas = Kelas::where('idKelas',$siswa->idKelas)->first();
+        $siswa = Siswa::with('siswaPerKelas.tahunAjar')
+                        ->whereHas('siswaPerKelas.tahunAjar', function($query){
+                            $query->where('aktif',true);
+                        })
+                        ->where('idSiswa',$id)->first();
+        $kelas = Kelas::with('tahunAjar')
+                        ->whereHas('tahunAjar', function($query){
+                            $query->where('aktif',true);
+                        })
+                        ->where('idKelas',$siswa->idKelas)->first();
         $data_kelas = Kelas::get();
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar','tahunAjar'])
                                     ->whereHas('siswaPerKelas', function($query) use ($id) {
                                                     $query->where('idSiswa', $id);
                                                 })
+                                    ->orWhereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    })
                                     ->orderByDESC('idTPS')
                                     ->paginate(5);
 
@@ -167,7 +185,11 @@ class SiswaController extends Controller
         $nomerWali = $request->input('noWali');
         $nomerKIP = $request->input('noKIP');
         
-        $siswa = Siswa::where('idSiswa',$id)->first();
+        $siswa = Siswa::with('siswaPerKelas.tahunAjar')
+                    ->whereHas('siswaPerKelas.tahunAjar',function($query){
+                        $query->where('aktif',true);
+                    })
+                    ->where('idSiswa',$id)->first();
         
         Siswa::where('idSiswa',$id)->update([
             'namaSiswa' => $namaSiswa,
@@ -206,7 +228,7 @@ class SiswaController extends Controller
     public function import(Request $request)
     {
         // Ambil nilai idKelas dari input form atau sumber lain
-        $idKelas = $request->input('kelas');
+        $idKelas = $request->input('kelasExcel');
 
         // Simpan nilai idKelas ke dalam properti $idKelas pada model Excel
         $import = new ImportExcel();

@@ -20,7 +20,17 @@ class TahunAjar extends Model
 
     public function siswaPerKelas()
     {
-        return $this->hasMany(SiswaPerKelas::class, 'idTahunAjar');
+        return $this->hasOne(SiswaPerKelas::class, 'idTahunAjar','idTahunAjar');
+    }
+
+    public function tagihanPerSiswa()
+    {
+        return $this->hasOne(SiswaPerKelas::class, 'idTahunAjar','idTahunAjar');
+    }
+
+    public function kelas()
+    {
+        return $this->hasOne(SiswaPerKelas::class, 'idTahunAjar','idTahunAjar');
     }
 
     protected $primaryKey = 'idTahunAjar';

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kelas;
+use App\Models\TahunAjar;
 use App\Models\Siswa;
+use App\Models\SiswaPerKelas;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -17,7 +19,11 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $kelas = Kelas::orderBy('namaKelas','ASC')->get();
+        $kelas = Kelas::with(['tahunAjar'])
+                        ->whereHas('tahunAjar',function($query){
+                            $query->where('aktif', true);
+                        })
+                        ->orderBy('namaKelas','ASC')->get();
 
 
         $view_data = [
@@ -47,6 +53,7 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
+        $tahunAjar = TahunAjar::where('aktif',true)->first();
         $namaKelas = $request->input('namaKelas');
         $waliKelas = $request->input('waliKelas');
         $email = $request->input('emailWaliKelas');
@@ -55,6 +62,7 @@ class KelasController extends Controller
             'namaKelas' => $namaKelas,
             'waliKelas' => $waliKelas,
             'emailWaliKelas' => $email,
+            'idTahunAjar' => $tahunAjar->idTahunAjar
         ]);
 
         return redirect('kelas');
@@ -68,12 +76,19 @@ class KelasController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $kelas = Kelas::where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
+        $kelas = Kelas::with(['tahunAjar'])
+                        ->whereHas('tahunAjar',function($query){
+                            $query->where('aktif', true);
+                        })->where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
         
-        $siswa = Siswa::with('kelas')->where([
-                'status'=>'aktif',
-                'idKelas' => $kelas->idKelas
-            ])->orderBy('namaSiswa','ASC')->paginate(10);
+        $siswa = Siswa::with(['kelas.tahunAjar'])
+                        ->whereHas('kelas.tahunAjar',function($query){
+                                        $query->where('aktif', true);
+                                    })    
+                        ->where([
+                            'status'=>'aktif',
+                            'idKelas' => $kelas->idKelas
+                        ])->orderBy('namaSiswa','ASC')->paginate(10);
         
 
         $judul = "Kelas";
@@ -91,9 +106,15 @@ class KelasController extends Controller
     public function search(Request $request, $id)
     {
         $search = $request->input('searchKelas');
-        $kelas = Kelas::where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
+        $kelas = Kelas::with(['tahunAjar'])
+                        ->whereHas('tahunAjar',function($query){
+                            $query->where('aktif', true);
+                        })->where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
         
-        $siswaQuery = Siswa::with('kelas')
+        $siswaQuery = Siswa::with(['kelas.tahunAjar'])
+                        ->whereHas('kelas.tahunAjar',function($query){
+                            $query->where('aktif', true);
+                        })
                         ->where([
                             'status'=>'aktif',
                             'idKelas' => $id
@@ -128,7 +149,10 @@ class KelasController extends Controller
      */
     public function edit($id)
     {
-        $kelas = Kelas::where('idKelas',$id)->first();
+        $kelas = $kelas = Kelas::with(['tahunAjar'])
+                        ->whereHas('tahunAjar',function($query){
+                            $query->where('aktif', true);
+                        })->where('idKelas',$id)->orderBy('namaKelas','ASC')->first();;
 
         $judul = 'Kelas';
 

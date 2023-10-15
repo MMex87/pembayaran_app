@@ -33,7 +33,7 @@ class SiswaPerKelas extends Model
 
     public function tahunAjar()
     {
-        return $this->belongsTo(TahunAjar::class, 'idTahunAjar');
+        return $this->belongsTo(TahunAjar::class, 'idTahunAjar','idTahunAjar');
     }
 
     public function tagihanPerSiswa()

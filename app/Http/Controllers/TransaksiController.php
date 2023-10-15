@@ -29,32 +29,38 @@ class TransaksiController extends Controller
     public function index()
     {
         $date = date('mYdiHs');
-        $kelas = Kelas::orderBy('namaKelas','ASC')->get();
+        $kelas = Kelas::with('tahunAjar')
+                        ->whereHas('tahunAjar',function($query){
+                            $query->where('aktif',true);
+                        })
+                        ->orderBy('namaKelas','ASC')->get();
         $tahun;
         $invoice;
         $daftarTagihan;
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar'])
+                                        ->whereHas('tahunAjar',function($query){
+                                            $query->where('aktif',true);
+                                        })
                                         ->where('status','Cart')
                                         ->get();
 
                                         
         if($tagihan->isNotEmpty()){
-            $tahunAjar = $tagihan[0]->siswaPerKelas->tahunAjar->tahun;
+            $tahunAjar = $tagihan[0]->tahunAjar->tahun;
             $temp = explode('/',$tahunAjar);
             $tahun = implode('-',$temp);
             $invoice = $tagihan[0]->transaksi->invoice;
             $idSPK = $tagihan[0]->idSPK;
-            $daftarTagihan = TagihanPerSiswa::with('tagihan.namaTagihan')
-                                                ->where(['idSPK'=>$idSPK, 'status'=>'Belum Lunas'])->get();
-            // dd($daftarTagihan[0]->idTagihan);
-            
+            $daftarTagihan = TagihanPerSiswa::with('tagihan.namaTagihan','tahunAjar')
+                                            ->whereHas('tahunAjar',function($query){
+                                                $query->where('aktif',true);
+                                            })
+                                            ->where(['idSPK'=>$idSPK, 'status'=>'Belum Lunas'])->get();
         }else{
             $tahun = '';
             $invoice = 'INV'.$date;
             $daftarTagihan = '';
         }
-
-        // dd($tagihan[0]->siswaPerKelas->siswa->idKelas);
 
         $view_data=[
             'kelas' => $kelas,
@@ -90,18 +96,30 @@ class TransaksiController extends Controller
         $namaSiswa = $request->input('siswa');
         $idTagihan = $request->input('namaTagihan');
         
-        $siswa = Siswa::where([
+        $siswa = Siswa::with('siswaPerKelas.tahunAjar')
+                        ->whereHas('siswaPerKelas.tahunAjar',function($query){
+                            $query->where('aktif',true);
+                        })
+                        ->where([
                             'idKelas' => $idKelas,
                             'namaSiswa' => $namaSiswa
                         ])->first();
         $idSiswa = $siswa->idSiswa;
 
-        $spk = SiswaPerKelas::where([
+        $spk = SiswaPerKelas::with('tahunAjar')
+                            ->whereHas('tahunAjar',function ($query) {
+                                $query->where('aktif',true);
+                            })
+                            ->where([
                                 'idSiswa' => $idSiswa,
                                 'idKelas' => $idKelas
                             ])->first();
 
-        $tps = TagihanPerSiswa::where([
+        $tps = TagihanPerSiswa::with('tahunAjar')
+                                ->whereHas('tahunAjar',function($query){
+                                    $query->where('aktif',true);
+                                })
+                                ->where([
                                     'idSPK' => $spk->idSPK,
                                     'idTagihan' =>$idTagihan
                                 ])->first();
@@ -177,7 +195,10 @@ class TransaksiController extends Controller
     public function printNota()
     {
         $date = date('d-m-Y');
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar','siswaPerKelas.kelas'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar','siswaPerKelas.kelas','tahunAjar'])
+                                    ->whereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    })
                                     ->where('status','Cart')
                                     ->get();
 

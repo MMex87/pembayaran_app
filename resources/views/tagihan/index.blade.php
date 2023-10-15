@@ -40,7 +40,7 @@
                                         <tr>
                                             <th data-sortable="true" style="width: 5%;">#</th>
                                             <th data-sortable="true" style="width: 20%;">Nama Tagihan</th>
-                                            <th data-sortable="true" style="width: 15%;">Tanggal Mulai</th>
+                                            <th data-sortable="true" style="width: 15%;">Total Bayar</th>
                                             <th data-sortable="true" style="width: 15%;">Tagihan Selesai</th>
                                             <th data-sortable="true" style="width: 15%;">Kelas</th>
                                             <th data-sortable="true" style="width: 15%;">Status</th>
@@ -53,7 +53,7 @@
                                             <tr data-index="{{ $index }}">
                                                 <td>{{ $index }}</td>
                                                 <td>{{ $value->namaTagihan->namaTagihan }}</td>
-                                                <td>{{ $value->tanggalMulai }}</td>
+                                                <td>{{ $value->hargaBayar }}</td>
                                                 <td>{{ $value->tanggalSelesai }}</td>
                                                 <td>{{ $value->kelas }}</td>
                                                 <td>{{ $value->status }}</td>

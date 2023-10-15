@@ -91,7 +91,11 @@ class SiswaPerKelasController extends Controller
         $namaSiswa = $request->namaSiswa;
 
         // Lakukan pencarian data siswa sesuai dengan $namaSiswa
-        $siswaPerKelas = SiswaPerKelas::where('idKelas', $idKelas)->get();
+        $siswaPerKelas = SiswaPerKelas::with('tahunAjar')
+                                    ->whereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    })
+                                    ->where('idKelas', $idKelas)->get();
 
         $siswaIds = $siswaPerKelas->pluck('idSiswa');
 

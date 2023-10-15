@@ -7,6 +7,7 @@ use App\Models\NamaTagihan;
 use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TagihanPerSiswa;
+use App\Models\TahunAjar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +22,11 @@ class TagihanController extends Controller
     {
         $search = $request->input('searchTagihan');
 
-        $tagihanQuery = Tagihan::with('namaTagihan');
+        $tagihanQuery = Tagihan::with(['namaTagihan','tagihanPerSiswa.tahunAjar']);
+
+        $tagihanQuery->whereHas('tagihanPerSiswa.tahunAjar',function($query){
+            $query->where('aktif',true);
+        });
 
         if($search){
             $tagihanQuery->whereHas('namaTagihan', function($query) use ($search){
@@ -46,7 +51,11 @@ class TagihanController extends Controller
     public function create()
     {
         $namaTagihan = NamaTagihan::get();
-        $kelas = Kelas::get();
+        $kelas = Kelas::with('tahunAjar')
+                    ->whereHas('tahunAjar',function($query){
+                        $query->where('aktif',true);
+                    })
+                    ->get();
 
         $data_view=[
             'namaTagihan' => $namaTagihan,
@@ -72,10 +81,14 @@ class TagihanController extends Controller
         $selectKelas = $request->input('checkKelas',[]);
         $selctAllKelas = $request->input('allCheckKelas');
 
-        $kelas = Kelas::orderBy('namaKelas','ASC')->get();
+        $kelas = Kelas::with('tahunAjar')
+                    ->whereHas('tahunAjar',function($query){
+                        $query->where('aktif',true);
+                    })->get();
 
         $dataKelas;
         
+        $tahunAjar = TahunAjar::where('aktif',true)->first();
 
         if($selctAllKelas == 'Semua Kelas'){
             // $temp = array();
@@ -88,7 +101,12 @@ class TagihanController extends Controller
         }else{
             $temp = array();
             foreach ($selectKelas as $item) {
-                $kelasLike = Kelas::where('namaKelas','LIKE',$item .'%')->get();
+                $kelasLike = Kelas::with('tahunAjar')
+                ->whereHas('tahunAjar', function($query){
+                    $query->where('aktif',true);
+                })
+                ->where('namaKelas','LIKE',$item .'%')->get();
+                
                 foreach ($kelasLike as $item2) {
                     array_push($temp,$item2->namaKelas);
                 }
@@ -126,13 +144,19 @@ class TagihanController extends Controller
                         'noTagihan' => $noInvoice,
                         'status' => 'Belum Lunas',
                         'idTagihan' => $tagihan->idTagihan,
-                        'idSPK' => $item->idSPK
+                        'idSPK' => $item->idSPK,
+                        'idTahunAjar' => $tahunAjar->idTahunAjar
                     ]);
                 }
             }
         }else{
             foreach ($selectKelas as $item) {
-                $kelasLike = Kelas::where('namaKelas','LIKE',$item .'%')->get();
+                $kelasLike = Kelas::with('tahunAjar')
+                ->whereHas('tahunAjar', function($query){
+                    $query->where('aktif',true);
+                })
+                ->where('namaKelas','LIKE',$item .'%')->get();
+
                 foreach ($kelasLike as $val ) {
                     $siswa = SiswaPerKelas::where('idKelas',$val->idKelas)->get();
                 
@@ -151,7 +175,8 @@ class TagihanController extends Controller
                             'noTagihan' => $noInvoice,
                             'status' => 'Belum Lunas',
                             'idTagihan' => $tagihan->idTagihan,
-                            'idSPK' => $item->idSPK
+                            'idSPK' => $item->idSPK,
+                            'idTahunAjar' => $tahunAjar->idTahunAjar
                         ]);
                     }
                 }
@@ -213,8 +238,8 @@ class TagihanController extends Controller
         $tanggalSelesai = $request->input('tanggalSelesai');
         $hargaBayar = $request->input('hargaBayar');
         $status = $request->input('status');
-        $selectKelas = $request->input('checkKelas',[]);
-        $selctAllKelas = $request->input('allCheckKelas');
+        // $selectKelas = $request->input('checkKelas',[]);
+        // $selctAllKelas = $request->input('allCheckKelas');
 
         // // deklarasi array
         // $arrayKelas = [];
@@ -398,20 +423,30 @@ class TagihanController extends Controller
 
         // $idSiswa = Siswa::where(['idSiswa'=> $idSiswa,'idKelas' => $idKelas])->first();
         
-        $idSPK = SiswaPerKelas::where([
-                                    'idSiswa' => $idSiswa,
-                                    'idKelas' => $idKelas
+        $idSPK = SiswaPerKelas::with('tahunAjar')
+                                    ->whereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    })
+                                    ->where([
+                                        'idSiswa' => $idSiswa,
+                                        'idKelas' => $idKelas
                                     ])->first();
-
         
-        $tagihanPerSiswa = TagihanPerSiswa::where([
-                                                'idSPK' => $idSPK->idSPK,
-                                                'status' => 'Belum Lunas'
-                                                ])->get();
+        $tagihanPerSiswa = TagihanPerSiswa::with('tahunAjar')
+                                    ->whereHas('tahunAjar',function($query){
+                                        $query->where('aktif',true);
+                                    })
+                                    ->where([
+                                        'idSPK' => $idSPK->idSPK,
+                                        'status' => 'Belum Lunas'
+                                    ])->get();
         
         $idTagihans = $tagihanPerSiswa->pluck('idTagihan');
         
-        $tagihan = Tagihan::with('namaTagihan')
+        $tagihan = Tagihan::with(['namaTagihan','tagihanPerSiswa.tahunAjar'])
+                            ->whereHas('tagihanPerSiswa.tahunAjar',function($query){
+                                $query->where('aktif',true);
+                            })
                             ->whereIn('idTagihan',$idTagihans)
                             ->get();
                             
