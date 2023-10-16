@@ -142,8 +142,13 @@
                                         <label for="jenisKelamin" class="col-md-4 col-lg-3 col-form-label">Jenis
                                             Kelamin</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="jenisKelamin" type="text" class="form-control" required
-                                                id="jenisKelamin" value="{{ $siswa->jenisKelamin }}">
+                                            <select name="jenisKelamin" id="jenisKelamin" class="form-control" required>
+                                                <option value="" selected>-- Pilih Jenis Kelamin --</option>
+                                                <option value="Laki-laki" @selected($siswa->jenisKelamin == 'Laki-laki')>
+                                                    Laki-laki</option>
+                                                <option value="Perempuan" @selected($siswa->jenisKelamin == 'Perempuan')>
+                                                    Perempuan</option>
+                                            </select>
                                             <div id="error-jenisKelamin" class="text-danger"></div>
                                         </div>
                                     </div>
@@ -371,6 +376,41 @@
                         }
                     });
                 });
+        });
+        // Validasi Select
+        $('select[name="jenisKelamin"]').on('change blur', function() {
+            var fieldName = $(this).attr('name');
+            var fieldValue = $(this).val();
+
+            var data = {};
+            data[fieldName] = fieldValue;
+
+            $.ajax({
+                url: '/siswaValidasi',
+                type: 'POST',
+                data: data,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.errors && response.errors[fieldName]) {
+                        $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                    } else {
+                        $('#error-' + fieldName).text('');
+                    }
+
+                    // Cek apakah ada pesan kesalahan lain
+                    var hasErrors = $('div[id^="error-"]').filter(function() {
+                        return $(this).text().length > 0;
+                    }).length > 0;
+
+                    // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                    $('#submitBtn').prop('disabled', hasErrors);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error(xhr);
+                }
+            });
         });
     </script>
 @endsection

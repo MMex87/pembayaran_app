@@ -7,6 +7,10 @@ use App\Models\TahunAjar;
 use App\Models\SiswaPerKelas;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use App\Models\Tagihan;
+use App\Models\TagihanPerSiswa;
+use App\Models\Transaksi;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -49,11 +53,45 @@ class DashboardController extends Controller
             $handleTambah = true;
         }
 
+        // detail Dashboard
+
+        $siswa = Siswa::with('siswaPerKelas.tahunAjar')
+                        ->whereHas('siswaPerKelas.tahunAjar',function($query){
+                            $query->where('aktif',true);
+                        })->count();
+
+        $tagihan = Tagihan::with('tagihanPerSiswa.tahunAjar')
+                        ->whereHas('tagihanPerSiswa.tahunAjar',function($query){
+                            $query->where('aktif',true);
+                        })->count();
+        
+        $tps = TagihanPerSiswa::with('tahunAjar')
+                            ->whereHas('tahunAjar',function($query){
+                                $query->where('aktif',true);
+                            })
+                            ->where('status','Belum Lunas')->count();
+
+        $transaksi = Transaksi::with(['tagihanPerSiswa.tahunAjar','tagihanPerSiswa.tagihan','tagihanPerSiswa.siswaPerKelas.siswa'])
+                            ->whereHas('tagihanPerSiswa.tahunAjar',function($query){
+                                $query->where('aktif',true);
+                            })->limit(6)->orderBy('idTransaksi','DESC')->get();
+        
+        $transaksi->map(function($item, $key) {
+            $waktu_transaksi = Carbon::parse($item->updated_at);
+            $selisih = $waktu_transaksi->diffForHumans();
+            $item->waktu_hitung = $selisih;
+            return $item;
+        });
+
         $judul = "Dashboard";
         return view('dashboard.index',[
             'tahunAjar' => $tahunAjar,
             'handleTambah' => $handleTambah,
-            'handleNaikKelas' => $handleNaikKelas
+            'handleNaikKelas' => $handleNaikKelas,
+            'siswa' => $siswa,
+            'tagihan' => $tagihan,
+            'tps' => $tps,
+            'transaksi' =>$transaksi
             ])->with('judul',$judul);
     }
 
@@ -220,6 +258,7 @@ class DashboardController extends Controller
             }else{
                 Siswa::where('idSiswa',$value->idSiswa)->update([
                     'idKelas' => $idKelas->idKelas,
+                    'status' => 'alumni'
                 ]);
                 SiswaPerKelas::create([
                     'idKelas' => $idKelas->idKelas,

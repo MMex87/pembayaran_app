@@ -202,11 +202,11 @@ class SiswaController extends Controller
             'namaWali' => $namaWali,
         ]);
 
-        if($idKelas != $siswa->idKelas){
-            SiswaPerKelas::where('idSiswa',$id)->update([
-                'idKelas' => $idKelas
-            ]);
-        }
+        // if($idKelas != $siswa->idKelas){
+        //     SiswaPerKelas::where('idSiswa',$id)->update([
+        //         'idKelas' => $idKelas
+        //     ]);
+        // }
 
         return redirect("/siswa/$id");
     }

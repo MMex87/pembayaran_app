@@ -89,13 +89,12 @@
                                     </div>
                                     <div class="col-md-12">
                                         <label for="noKIP" class="form-label">nomer KIP</label>
-                                        <input type="text" class="form-control" id="noKIP" name="noKIP" required>
+                                        <input type="text" class="form-control" id="noKIP" name="noKIP">
                                         <div id="error-noKIP" class="text-danger"></div>
                                     </div>
                                     <div class="col-md-12">
                                         <label for="noWali" class="form-label">Nomer Wali Siswa</label>
-                                        <input type="text" class="form-control" id="noWali" name="noWali"
-                                            required>
+                                        <input type="text" class="form-control" id="noWali" name="noWali">
                                         <div id="error-noWali" class="text-danger"></div>
                                     </div>
                                     <div class="text-center">

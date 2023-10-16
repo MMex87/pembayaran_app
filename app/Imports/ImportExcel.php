@@ -17,11 +17,7 @@ class ImportExcel implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-        $tahunAjar = TahunAjar::with('tahunAjar')
-                            ->whereHas('tahunAjar',function($query){
-                                $query->where('aktif',true);
-                            })
-                            ->first();
+        $tahunAjar = TahunAjar::where('aktif',true)->first();
         foreach ($rows as $row) {
             
             $excelDate = Date::excelToDateTimeObject($row['tanggallahir']);
