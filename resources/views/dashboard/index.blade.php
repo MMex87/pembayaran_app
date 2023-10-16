@@ -176,10 +176,10 @@
                                         <table class="table table-borderless datatable datatable-table">
                                             <thead>
                                                 <tr>
-                                                    <th data-sortable="true" style="width: 15%;">#</th>
+                                                    <th data-sortable="true" style="width: 10%;">#</th>
                                                     <th data-sortable="true" style="width: 35%;">Tahun</th>
                                                     <th data-sortable="true" style="width: 30%;">Status</th>
-                                                    <th data-sortable="true" style="width: 20%;">Aksi</th>
+                                                    <th data-sortable="true" style="width: 25%;">Aksi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -191,7 +191,14 @@
                                                         <td>{{ $val->tahun }}</td>
                                                         <td>{{ $val->aktif == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
                                                         @if ($val->aktif == 1)
-                                                            <td>Aktif</td>
+                                                            @if ($handleNaikKelas == true)
+                                                                <td>
+                                                                    <a class="btn btn-primary" href="/naikKelas">Naik
+                                                                        Kelas</a>
+                                                                </td>
+                                                            @else
+                                                                <td>Aktif</td>
+                                                            @endif
                                                         @else
                                                             <td>
                                                                 <form action="/tahunAjar/{{ $val->idTahunAjar }}"

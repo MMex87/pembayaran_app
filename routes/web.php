@@ -27,6 +27,9 @@ use App\Http\Controllers\TagihanPerSiswaController;
 Route::get('/',[DashboardController::class, 'index']);
 Route::post('/tahunAjar', [DashboardController::class, 'store']);
 Route::Patch('/tahunAjar/{id}', [DashboardController::class, 'update']);
+Route::get('/naikKelas', [DashboardController::class, 'naikKelas']);
+Route::post('/generateKelas', [DashboardController::class, 'generateKelas']);
+Route::post('/naikKelas', [DashboardController::class, 'storeNaikKelas']);
 
 // kelas
 Route::get('kelas',[KelasController::class, 'index']);
