@@ -54,7 +54,7 @@
                         <h5 class="card-title">Form Generate Naik Kelas</h5>
 
                         <!-- Multi Columns Form -->
-                        <form class="row g-3" action="/naikKelas" method="POST">
+                        <form class="row g-3" action="/generateNaikKelas" method="POST">
                             @csrf
                             <div class="col-md-12">
                                 <label for="kelas" class="form-label">Naik Kelas</label>

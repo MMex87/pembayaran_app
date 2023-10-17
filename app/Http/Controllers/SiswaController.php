@@ -128,11 +128,11 @@ class SiswaController extends Controller
                         })
                         ->where('idKelas',$siswa->idKelas)->first();
         $data_kelas = Kelas::get();
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas.tahunAjar','tahunAjar'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas','tahunAjar'])
                                     ->whereHas('siswaPerKelas', function($query) use ($id) {
                                                     $query->where('idSiswa', $id);
                                                 })
-                                    ->orWhereHas('tahunAjar',function($query){
+                                    ->WhereHas('tahunAjar',function($query){
                                         $query->where('aktif',true);
                                     })
                                     ->orderByDESC('idTPS')

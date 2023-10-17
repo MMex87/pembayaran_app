@@ -188,18 +188,30 @@ class DashboardController extends Controller
 
     public function naikKelas()
     {
+        
+        $tahunAjarBaru = TahunAjar::where('aktif',true)->first();
         $kelas = Kelas::with('tahunAjar')
                     ->whereHas('tahunAjar',function($query){
                         $query->where('aktif',true);
                     })->get();
+
+        $spk = SiswaPerKelas::with('kelas')->where('idTahunAjar',$tahunAjarBaru->idTahunAjar)->get();
+
         $handleNaikKelas = false;
+        $handlePage = false;
         if($kelas->isEmpty()){
             $handleNaikKelas = false;
         }else{
             $handleNaikKelas = true;
         }
 
-        if($handleNaikKelas == true){
+        if($spk->isEmpty()){
+            $handlePage = false;
+        }else{
+            $handlePage = true;
+        }
+
+        if($handlePage == true){
             return redirect('/');
         }else{
             return view('dashboard.naikKelas',['naikKelas' => $handleNaikKelas])->with('judul','Dashboard');
@@ -247,10 +259,13 @@ class DashboardController extends Controller
         
             $pisahKelas = str_split($value->siswaPerKelas[0]->kelas->namaKelas);
             $namaKelas = ($pisahKelas[0] + 1).$pisahKelas[1];
+            
             $idKelas = Kelas::with('tahunAjar')
                             ->whereHas('tahunAjar',function($query){
                                 $query->where('aktif',true);
                             })->where('namaKelas',$namaKelas)->first();
+                            dd($idKelas);
+                            
             if($pisahKelas[0] == 6){
                 Siswa::where('idSiswa',$value->idSiswa)->update([
                     'idKelas' => null,
