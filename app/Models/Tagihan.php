@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\NamaTagihan;
 use App\Models\TagihanPerSiswa;
+use App\Models\Golongan;
 
 class Tagihan extends Model
 {
@@ -19,7 +20,7 @@ class Tagihan extends Model
         'tanggalMulai',
         'tanggalSelesai',
         'hargaBayar',
-        'status',
+        'idGolongan',
         'kelas'
     ];
 
@@ -41,6 +42,11 @@ class Tagihan extends Model
     public function tagihanPerSiswa()
     {
         return $this->hasMany(TagihanPerSiswa::class, 'idTagihan');
+    }
+
+    public function golongan()
+    {
+        return $this->hasOne(Golongan::class,'idGolongan','idGolongan');
     }
 
     protected $primaryKey = 'idTagihan';

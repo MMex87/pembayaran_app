@@ -90,6 +90,10 @@
                                     <div class="col-lg-3 col-md-4 label">Nomor KIP</div>
                                     <div class="col-lg-9 col-md-8">{{ $siswa->noKIP }}</div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Golongan</div>
+                                    <div class="col-lg-9 col-md-8">Golongan {{ $siswa->golongan->namaGolongan }}</div>
+                                </div>
                                 <div class="d-flex justify-content-end">
                                     <div class="row-2">
                                         <form action="/siswa/{{ $siswa->idSiswa }}" method="POST"
@@ -165,7 +169,7 @@
                                         <label for="noWali" class="col-md-4 col-lg-3 col-form-label">No HP Wali</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="noWali" type="text" class="form-control" id="noWali"
-                                                required value="{{ $siswa->noHP }}">
+                                                value="{{ $siswa->noHP }}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -181,7 +185,25 @@
                                         <label for="noKIP" class="col-md-4 col-lg-3 col-form-label">Nomer KIP</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="noKIP" type="text" class="form-control" id="noKIP"
-                                                required value="{{ $siswa->noKIP }}">
+                                                value="{{ $siswa->noKIP }}">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="golongan" class="col-md-4 col-lg-3 col-form-label">Golongan</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="golongan" id="golongan" class="form-control" required>
+                                                <option value="" selected>-- Pilih Golongan --</option>
+                                                @foreach ($golongan as $val)
+                                                    <option value="{{ $val->idGolongan }}" @selected($siswa->golongan->idGolongan == $val->idGolongan)>
+                                                        Golongan
+                                                        {{ $val->namaGolongan }}
+                                                    </option>
+                                                @endForeach
+                                            </select>
+                                            <div id="error-golongan" class="text-danger"></div>
+                                            <div id="tagihanHelp" class="form-text">Jika Golongan tidak ada, klik <span
+                                                    class="btnGolongan" style="color: blue; cursor: pointer;">Tambah
+                                                    Golongan</span></div>
                                         </div>
                                     </div>
                                     <div class="text-center">
@@ -378,7 +400,7 @@
                 });
         });
         // Validasi Select
-        $('select[name="jenisKelamin"]').on('change blur', function() {
+        $('select[name="jenisKelamin"], select[name="golongan"]').on('change blur', function() {
             var fieldName = $(this).attr('name');
             var fieldValue = $(this).val();
 

@@ -52,12 +52,21 @@
                             <div id="error-hargaBayar" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
-                            <label for="status" class="form-label">Status Aktif</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="aktif">Aktif</option>
-                                <option value="tidak aktif">Tidak Aktif</option>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="checkGolongan" value="true">
+                                <label class="form-check-label" for="flexSwitchCheckReverse">Golongan</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12" id="displayGolongan" style="display: none">
+                            <label for="golongan" class="form-label">Golongan</label>
+                            <select name="golongan" id="golongan" class="form-control">
+                                <option value="" selected>-- Pilih Golongan --</option>
+                                @foreach ($golongan as $val)
+                                    <option value="{{ $val->idGolongan }}">Golongan {{ $val->namaGolongan }}
+                                    </option>
+                                @endForeach
                             </select>
-                            <div id="error-status" class="text-danger"></div>
+                            <div id="error-golongan" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
                             <label for="kelas" class="form-label">Kelas</label>
@@ -87,8 +96,8 @@
                                     </td>
                                     <td>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input checkKelas" type="checkbox" name="checkKelas[]"
-                                                id="checkKelas3" value="3">
+                                            <input class="form-check-input checkKelas" type="checkbox"
+                                                name="checkKelas[]" id="checkKelas3" value="3">
                                             <label class="form-check-label" for="checkKelas3">Kelas 3</label>
                                         </div>
                                     </td>
@@ -151,6 +160,19 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('input[name="checkGolongan"]').on('change', function() {
+                let display = document.getElementById('displayGolongan')
+                if (this.checked) {
+                    display.style.display = ""
+                } else {
+                    display.style.display = "none"
+                }
+            })
+        })
     </script>
 
     <script>

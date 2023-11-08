@@ -10,6 +10,7 @@ use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\NamaTagihanController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TagihanPerSiswaController;
+use App\Http\Controllers\GolonganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,7 @@ Route::get('tagihan/create',[TagihanController::class, 'create']);
 Route::post('tagihan',[TagihanController::class, 'store']);
 Route::get('tagihan/{id}/edit',[TagihanController::class, 'edit']);
 Route::patch('tagihan/{id}',[TagihanController::class, 'update']);
+Route::patch('tagihan/{id}',[TagihanController::class, 'update']);
 Route::post('tagihanValidasi',[TagihanController::class, 'validation']);
 
 // api get siswa
@@ -73,6 +75,15 @@ Route::get('namaTagihan/create',[NamaTagihanController::class,'create']);
 Route::post('namaTagihan',[NamaTagihanController::class, 'store']);
 Route::patch('namaTagihan/{id}',[NamaTagihanController::class, 'update']);
 Route::delete('namaTagihan/{id}',[NamaTagihanController::class, 'destroy']);
+
+// nama Golongan
+Route::get('golongan',[GolonganController::class,'index']);
+Route::get('golongan/create',[GolonganController::class,'create']);
+Route::get('getGolongan',[GolonganController::class, 'getGolongan']);
+Route::post('golongan',[GolonganController::class, 'store']);
+Route::patch('golongan/{id}',[GolonganController::class, 'update']);
+Route::delete('golongan/{id}',[GolonganController::class, 'destroy']);
+Route::post('golonganValidasi',[GolonganController::class, 'validation']);
 
 
 // Pembayaran

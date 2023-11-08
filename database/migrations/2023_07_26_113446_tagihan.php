@@ -20,11 +20,14 @@ return new class extends Migration
             $table->integer('hargaBayar');
             $table->date('tanggalMulai');
             $table->date('tanggalSelesai');
-            $table->string('status');
             $table->softDeletes();
             // relasi ke nama tagihan
             $table->unsignedBigInteger('idNamaTagihan');
             $table->foreign('idNamaTagihan')->references('idNamaTagihan')->on('nama_tagihan');
+
+            // relasi table golongan
+            $table->unsignedBigInteger('idGolongan');
+            $table->foreign('idGolongan')->references('idGolongan')->on('golongan');
 
             $table->timestamps();
         });

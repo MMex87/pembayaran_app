@@ -81,7 +81,7 @@ class KelasController extends Controller
                             $query->where('aktif', true);
                         })->where('idKelas',$id)->orderBy('namaKelas','ASC')->first();
         
-        $siswa = Siswa::with(['kelas.tahunAjar'])
+        $siswa = Siswa::with(['kelas.tahunAjar','golongan'])
                         ->whereHas('kelas.tahunAjar',function($query){
                                         $query->where('aktif', true);
                                     })    

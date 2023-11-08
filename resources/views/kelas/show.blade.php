@@ -56,11 +56,10 @@
                                     <thead>
                                         <tr>
                                             <th data-sortable="true" style="width: 5%;">#</th>
-                                            <th data-sortable="true" style="width: 20%;">Nama</th>
+                                            <th data-sortable="true" style="width: 35%;">Nama</th>
                                             <th data-sortable="true" style="width: 20%;">NIK</th>
                                             <th data-sortable="true" style="width: 10%;">Jenis Kelamin</th>
-                                            <th data-sortable="true" style="width: 15%;">Kelas</th>
-                                            <th data-sortable="true" style="width: 20%;">Nama Wali</th>
+                                            <th data-sortable="true" style="width: 20%;">Golongan</th>
                                             <th data-sortable="true" style="width: 10%;">Aksi</th>
                                         </tr>
                                     </thead>
@@ -79,8 +78,7 @@
                                                     <td>{{ $value->namaSiswa }}</td>
                                                     <td>{{ $value->nik }}</td>
                                                     <td>{{ $value->jenisKelamin }}</td>
-                                                    <td>{{ $value->kelas->first()->namaKelas }}</td>
-                                                    <td>{{ $value->namaWali }}</td>
+                                                    <td>Golongan {{ $value->golongan->namaGolongan }}</td>
                                                     <td><a href="/siswa/{{ $value->idSiswa }}"
                                                             class="btn btn-primary">Detail</a></td>
                                                 </tr>

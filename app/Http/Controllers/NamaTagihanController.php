@@ -18,7 +18,7 @@ class NamaTagihanController extends Controller
         if($search){
             $namaTagihan = NamaTagihan::where('namaTagihan' , 'LIKE' , "%$search%")->paginate(2);
         }else{
-            $namaTagihan = NamaTagihan::paginate(2);
+            $namaTagihan = NamaTagihan::paginate(5);
         }
 
         $data_view= [

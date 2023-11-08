@@ -43,7 +43,7 @@
                                             <th data-sortable="true" style="width: 15%;">Total Bayar</th>
                                             <th data-sortable="true" style="width: 15%;">Tagihan Selesai</th>
                                             <th data-sortable="true" style="width: 15%;">Kelas</th>
-                                            <th data-sortable="true" style="width: 15%;">Status</th>
+                                            <th data-sortable="true" style="width: 15%;">Golongan</th>
                                             <th data-sortable="true" style="width: 15%;">Aksi</th>
                                         </tr>
                                     </thead>
@@ -56,7 +56,11 @@
                                                 <td>{{ $value->hargaBayar }}</td>
                                                 <td>{{ $value->tanggalSelesai }}</td>
                                                 <td>{{ $value->kelas }}</td>
-                                                <td>{{ $value->status }}</td>
+                                                @if ($value->golongan->namaGolongan == 0)
+                                                    <td>Tidak Ada Golongan</td>
+                                                @else
+                                                    <td>Golongan {{ $value->golongan->namaGolongan }}</td>
+                                                @endif
                                                 <td><a href="/tagihan/{{ $value->idTagihan }}/edit"
                                                         class="btn btn-warning">Edit</a></td>
                                             </tr>
@@ -78,4 +82,53 @@
         </div>
     </section>
 
+    @if (Session::has('successTagihan'))
+        <script>
+            $(document).ready(function() {
+                Swal.close();
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: '{{ Session::get('successTagihan') }}'
+                })
+            })
+        </script>
+        @php(session()->forget('successExcel'))
+    @endif
+
+    @if (Session::has('gagalGolongan'))
+        <script>
+            $(document).ready(function() {
+                Swal.close();
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'error',
+                    title: '{{ Session::get('gagalGolongan') }}'
+                })
+            })
+        </script>
+        @php(session()->forget('successExcel'))
+    @endif
 @endsection

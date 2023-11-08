@@ -30,6 +30,10 @@ return new class extends Migration
             // relasi table kelas
             $table->unsignedBigInteger('idKelas');
             $table->foreign('idKelas')->references('idKelas')->on('kelas');
+            
+            // relasi table golongan
+            $table->unsignedBigInteger('idGolongan');
+            $table->foreign('idGolongan')->references('idGolongan')->on('golongan');
             // $table->timestamps();
         });
     }

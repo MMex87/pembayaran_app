@@ -27,7 +27,7 @@
                                         class="bi bi-plus-lg"></i></a>
                                 <div class="datatable-search">
                                     <form action="/tagihanPerSiswa" method="get">
-                                        <input class="datatable-input" placeholder="Nama Tagihan & Siswa" type="search"
+                                        <input class="datatable-input" placeholder="Tagihan, Siswa, Status" type="search"
                                             title="Search within table" value="{{ request('search') }}" name="search">
                                     </form>
                                 </div>

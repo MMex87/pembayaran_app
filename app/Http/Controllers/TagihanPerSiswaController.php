@@ -28,6 +28,7 @@ class TagihanPerSiswaController extends Controller
             $queryTagihan->orWhereHas('siswaPerKelas.siswa', function($query) use ($search){
                 $query->where('namaSiswa', 'LIKE', "%$search%");
             });
+            $queryTagihan->orWhere('status','LIKE', "$search%");
         }
 
         $tagihan = $queryTagihan->orderBy('idSPK','ASC')->paginate(10);

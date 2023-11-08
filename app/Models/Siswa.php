@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
+use App\Models\Golongan;
 
 class Siswa extends Model
 {
@@ -23,7 +24,8 @@ class Siswa extends Model
         'idKelas',
         'noKIP',
         'namaWali',
-        'status'
+        'status',
+        'idGolongan'
     ];
 
 
@@ -35,6 +37,11 @@ class Siswa extends Model
     public function siswaPerKelas()
     {
         return $this->hasMany(SiswaPerKelas::class, 'idSiswa');
+    }
+    
+    public function golongan()
+    {
+        return $this->belongsTo(Golongan::class,'idGolongan');
     }
 
     protected $primaryKey = 'idSiswa';

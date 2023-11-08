@@ -97,6 +97,20 @@
                                         <input type="text" class="form-control" id="noWali" name="noWali">
                                         <div id="error-noWali" class="text-danger"></div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <label for="golongan" class="form-label">Golongan</label>
+                                        <select name="golongan" id="golongan" class="form-control" required>
+                                            <option value="" selected>-- Pilih Golongan --</option>
+                                            @foreach ($golongan as $val)
+                                                <option value="{{ $val->idGolongan }}">Golongan {{ $val->namaGolongan }}
+                                                </option>
+                                            @endForeach
+                                        </select>
+                                        <div id="error-golongan" class="text-danger"></div>
+                                        <div id="tagihanHelp" class="form-text">Jika Golongan tidak ada, klik <span
+                                                class="btnGolongan" style="color: blue; cursor: pointer;">Tambah
+                                                Golongan</span></div>
+                                    </div>
                                     <div class="text-center">
                                         <button type="submit" id="submitBtn" class="btn btn-primary"
                                             disabled>Submit</button>
@@ -153,11 +167,21 @@
         <script>
             $(document).ready(function() {
                 swal.close();
-                Swal.fire({
-                    icon: 'success',
-                    title: '{{ Session::get('successExcel') }}',
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
                     showConfirmButton: false,
-                    timer: 1500
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: '{{ Session::get('successExcel') }}'
                 })
             })
         </script>
@@ -203,40 +227,102 @@
                 });
         });
         // Validasi Select
-        $('select[name="jenisKelamin"],select[name="kelas"],select[name="kelasExcel"]').on('change blur', function() {
-            var fieldName = $(this).attr('name');
-            var fieldValue = $(this).val();
+        $('select[name="jenisKelamin"],select[name="kelas"],select[name="kelasExcel"],select[name="golongan"]').on(
+            'change blur',
+            function() {
+                var fieldName = $(this).attr('name');
+                var fieldValue = $(this).val();
 
-            var data = {};
-            data[fieldName] = fieldValue;
+                var data = {};
+                data[fieldName] = fieldValue;
 
+                $.ajax({
+                    url: '/siswaValidasi',
+                    type: 'POST',
+                    data: data,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.errors && response.errors[fieldName]) {
+                            $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                        } else {
+                            $('#error-' + fieldName).text('');
+                        }
+
+                        // Cek apakah ada pesan kesalahan lain
+                        var hasErrors = $('div[id^="error-"]').filter(function() {
+                            return $(this).text().length > 0;
+                        }).length > 0;
+
+                        // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
+                        $('#submitBtn').prop('disabled', hasErrors);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error(xhr);
+                    }
+                });
+            });
+        $(".btnGolongan").click(function() {
             $.ajax({
-                url: '/siswaValidasi',
-                type: 'POST',
-                data: data,
+                url: '/getGolongan',
+                type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    if (response.errors && response.errors[fieldName]) {
-                        $('#error-' + fieldName).text(response.errors[fieldName][0]);
+                    let golongan = JSON.parse(response)
+                    let namaGolongan;
+                    if (golongan == null) {
+                        namaGolongan = 1
                     } else {
-                        $('#error-' + fieldName).text('');
+                        namaGolongan = golongan.namaGolongan + 1
                     }
-
-                    // Cek apakah ada pesan kesalahan lain
-                    var hasErrors = $('div[id^="error-"]').filter(function() {
-                        return $(this).text().length > 0;
-                    }).length > 0;
-
-                    // Aktifkan atau non-aktifkan tombol submit berdasarkan apakah ada kesalahan
-                    $('#submitBtn').prop('disabled', hasErrors);
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.error(xhr);
+                    let data = {
+                        namaGolongan
+                    }
+                    Swal.fire({
+                        title: 'Tambah Golongan?',
+                        text: `Golongan Ke ${namaGolongan}`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Tambah Golongan'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/golongan`,
+                                type: 'POST',
+                                data,
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                        'content')
+                                },
+                                success: function(response) {
+                                    Swal.fire({
+                                        title: 'Berhasil di Tambahkan!',
+                                        text: `Golongan ke ${namaGolongan} berhasil di Tambahkan.`,
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        willClose: () => {
+                                            location.reload();
+                                        }
+                                    })
+                                },
+                                error: function() {
+                                    Swal.fire(
+                                        'Gagal di Tambahkan!',
+                                        'Golongan ke ${namaGolongan} Gagal di Tambahkan.',
+                                        'error'
+                                    )
+                                }
+                            })
+                        }
+                    })
                 }
-            });
-        });
+            })
+        })
     </script>
 
 @endsection

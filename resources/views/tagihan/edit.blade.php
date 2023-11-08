@@ -54,14 +54,6 @@
                                 value="{{ $tagihan->hargaBayar }}">
                             <div id="error-hargaBayar" class="text-danger"></div>
                         </div>
-                        <div class="col-md-12">
-                            <label for="status" class="form-label">Status Aktif</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="aktif" @selected($tagihan->status == 'aktif')>Aktif</option>
-                                <option value="tidak aktif" @selected($tagihan->status == 'tidak aktif')>Tidak Aktif</option>
-                            </select>
-                            <div id="error-status" class="text-danger"></div>
-                        </div>
                         {{-- <div class="col-md-12">
                             <label for="kelas" class="form-label">Kelas</label>
                             <br>

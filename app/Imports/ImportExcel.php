@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Siswa;
 use App\Models\SiswaPerKelas;
 use App\Models\TahunAjar;
+use App\Models\Golongan;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Collection;
@@ -23,6 +24,8 @@ class ImportExcel implements ToCollection, WithHeadingRow
             $excelDate = Date::excelToDateTimeObject($row['tanggallahir']);
             $tanggalLahir = $excelDate->format('Y-m-d');
 
+            $golongan = Golongan::where('namaGolongan', $row['namagolongan'])->first();
+
             if($row['namasiswa'] != null){
                 $siswa = Siswa::create([
                     'namaSiswa' => $row['namasiswa'],
@@ -35,6 +38,7 @@ class ImportExcel implements ToCollection, WithHeadingRow
                     'namaWali' => $row['namawali'],
                     'status' => $row['status'],
                     'idKelas' => $this->idKelas,
+                    'idGolongan' => $golongan->idGolongan
                 ]);
                 SiswaPerKelas::create([
                     'idKelas' => $this->idKelas,

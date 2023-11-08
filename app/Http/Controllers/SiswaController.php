@@ -8,10 +8,12 @@ use App\Models\Kelas;
 use App\Models\SiswaPerKelas;
 use App\Models\TahunAjar;
 use App\Models\TagihanPerSiswa;
+use App\Models\Tagihan;
 use App\Imports\ImportExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Golongan;
 
 class SiswaController extends Controller
 {
@@ -23,7 +25,7 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('searchSiswa');
-        $siswaQuery = SiswaPerKelas::with(['siswa', 'kelas','tahunAjar'])
+        $siswaQuery = SiswaPerKelas::with(['siswa','siswa.golongan', 'kelas','tahunAjar'])
                                 ->whereHas('tahunAjar', function($query){
                                     $query->where('aktif',true);
                                 })
@@ -59,8 +61,11 @@ class SiswaController extends Controller
                                 $query->where('aktif', true);
                             })->get();
 
+        $golongan = Golongan::get();
+
         $view_data=[
-            'kelas' => $kelas
+            'kelas' => $kelas,
+            'golongan' => $golongan
         ];
         $judul = 'Siswa';
         return view('siswa.create',$view_data)->with('judul',$judul);
@@ -83,6 +88,7 @@ class SiswaController extends Controller
         $alamat = $request->input('alamat');
         $nomerWali = $request->input('noWali');
         $nomerKIP = $request->input('noKIP');
+        $golongan = $request->input('golongan');
         
         $siswa = Siswa::create([
             'namaSiswa' => $namaSiswa,
@@ -94,7 +100,8 @@ class SiswaController extends Controller
             'idKelas' =>$idKelas,
             'noKIP' => $nomerKIP,
             'namaWali' => $namaWali,
-            'status' => 'aktif'
+            'status' => 'aktif',
+            'idGolongan' => $golongan
         ]);
         
         $tahunAjar = TahunAjar::where('aktif', true)->first();
@@ -117,7 +124,7 @@ class SiswaController extends Controller
      */
     public function show($id)
     {
-        $siswa = Siswa::with('siswaPerKelas.tahunAjar')
+        $siswa = Siswa::with('siswaPerKelas.tahunAjar','golongan')
                         ->whereHas('siswaPerKelas.tahunAjar', function($query){
                             $query->where('aktif',true);
                         })
@@ -127,7 +134,10 @@ class SiswaController extends Controller
                             $query->where('aktif',true);
                         })
                         ->where('idKelas',$siswa->idKelas)->first();
-        $data_kelas = Kelas::get();
+        $data_kelas = Kelas::with('tahunAjar')
+                        ->whereHas('tahunAjar', function($query){
+                            $query->where('aktif',true);
+                        })->get();
         $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','siswaPerKelas','tahunAjar'])
                                     ->whereHas('siswaPerKelas', function($query) use ($id) {
                                                     $query->where('idSiswa', $id);
@@ -137,13 +147,16 @@ class SiswaController extends Controller
                                     })
                                     ->orderByDESC('idTPS')
                                     ->paginate(5);
+                                    
+        $golongan = Golongan::get();
 
         $view_data=[
             'siswa' => $siswa,
             'namaKelas' => $kelas->namaKelas,
             'data_kelas' => $data_kelas,
             'kelas' => $kelas,
-            'tagihan' => $tagihan
+            'tagihan' => $tagihan,
+            'golongan' => $golongan
         ];
         return view('siswa.detail',$view_data)->with('judul','Siswa');
     }
@@ -157,6 +170,20 @@ class SiswaController extends Controller
     public function updateKelas($idSiswa, $idSPK, Request $request)
     {
         $idKelas = $request->input('kelas');
+        // $spkKelasBaru = SiswaPerKelas::where('idKelas',$idKelas)->first();
+        // $tps = TagihanPerSiswa::where('idSPK',$idSPK)->get();
+        // $tpskelasBaru = TagihanPerSiswa::where('idSPK',$spkKelasBaru->idSPK)->get();
+        
+        // foreach ($tpskelasBaru as $val) {
+        //     for ($i = 0;$i< $tpskelasBaru->count();$i++) {
+        //         if($tps[$i]->idTagihan == null){
+        //             dd("tidak ganti");
+        //         }else{
+        //             dd('ganti');
+        //         }
+        //     }
+        // }
+            
         SiswaPerKelas::where('idSPK', $idSPK)->update([
             'idKelas' => $idKelas
         ]);
@@ -164,7 +191,8 @@ class SiswaController extends Controller
             'idKelas' => $idKelas
         ]);
 
-        return redirect('/siswa/'.$idSiswa);
+
+        return redirect("/siswa/$idSiswa");
     }
 
     /**
@@ -184,6 +212,7 @@ class SiswaController extends Controller
         $alamat = $request->input('alamat');
         $nomerWali = $request->input('noWali');
         $nomerKIP = $request->input('noKIP');
+        $golongan = $request->input('golongan');
         
         $siswa = Siswa::with('siswaPerKelas.tahunAjar')
                     ->whereHas('siswaPerKelas.tahunAjar',function($query){
@@ -200,6 +229,7 @@ class SiswaController extends Controller
             'alamat' => $alamat,
             'noKIP' => $nomerKIP,
             'namaWali' => $namaWali,
+            'idGolongan' => $golongan
         ]);
 
         // if($idKelas != $siswa->idKelas){
@@ -253,7 +283,8 @@ class SiswaController extends Controller
             'kelasExcel' => 'required',
             'alamat' => 'required',
             'waliSiswa' => 'required|max:255',
-            'inputExcel' => 'required'
+            'inputExcel' => 'required',
+            'golongan' => 'required'
         ];
 
         $messages = [
@@ -270,7 +301,8 @@ class SiswaController extends Controller
             'alamat.required' => 'Alamat wajib diisi.',
             'waliSiswa.required' => 'Nama Wali wajib diisi.',
             'waliSiswa.max' => 'Nama Wali terlalu panjang.',
-            'inputExcel.required' => 'Upload excel wajib diisi'
+            'inputExcel.required' => 'Upload excel wajib diisi',
+            'golongan.required' => 'Golongan wajib diisi'
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

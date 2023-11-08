@@ -5,6 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\TahunAjar;
+use Database\Seeders\Kelas;
+use Database\Seeders\Golongan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,5 +24,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call(TahunAjar::class);
+        $this->call(Kelas::class);
+        $this->call(Golongan::class);
     }
 }
