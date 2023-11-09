@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\TagihanPerSiswa;
 use App\Models\SiswaPerKelas;
+use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
@@ -37,13 +38,14 @@ class TransaksiController extends Controller
         $tahun;
         $invoice;
         $daftarTagihan;
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar','transaksi.users'])
                                         ->whereHas('tahunAjar',function($query){
                                             $query->where('aktif',true);
                                         })
                                         ->where('status','Cart')
                                         ->get();
 
+        // dd($tagihan);
                                         
         if($tagihan->isNotEmpty()){
             $tahunAjar = $tagihan[0]->tahunAjar->tahun;
@@ -51,7 +53,7 @@ class TransaksiController extends Controller
             $tahun = implode('-',$temp);
             $invoice = $tagihan[0]->transaksi->invoice;
             $idSPK = $tagihan[0]->idSPK;
-            $daftarTagihan = TagihanPerSiswa::with('tagihan.namaTagihan','tahunAjar')
+            $daftarTagihan = TagihanPerSiswa::with('tagihan.namaTagihan','tahunAjar','transaksi.users')
                                             ->whereHas('tahunAjar',function($query){
                                                 $query->where('aktif',true);
                                             })
@@ -62,11 +64,14 @@ class TransaksiController extends Controller
             $daftarTagihan = '';
         }
 
+        $user = Users::orderBy('idUser','DESC')->get();
+
         $view_data=[
             'kelas' => $kelas,
             'invoice' => $invoice,
             'tagihan' => $tagihan,
             'tahun' => $tahun,
+            'users' => $user,
             'daftarTagihan' => $daftarTagihan
         ];
         
@@ -95,6 +100,7 @@ class TransaksiController extends Controller
         $idKelas = $request->input('kelas');
         $namaSiswa = $request->input('siswa');
         $idTagihan = $request->input('namaTagihan');
+        $idUser = $request->input('namaTagihan');
         
         $siswa = Siswa::with('siswaPerKelas.tahunAjar')
                         ->whereHas('siswaPerKelas.tahunAjar',function($query){
@@ -133,7 +139,8 @@ class TransaksiController extends Controller
         Transaksi::create([
             'invoice' => $invoice,
             'verify' => 'Belum Verify',
-            'idTPS' => $tps->idTPS
+            'idTPS' => $tps->idTPS,
+            'idUser' => $idUser
         ]);
         
         Session::flash('success', 'Checkout Berhasil');
@@ -195,7 +202,7 @@ class TransaksiController extends Controller
     public function printNota()
     {
         $date = date('d-m-Y');
-        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar','siswaPerKelas.kelas','tahunAjar'])
+        $tagihan = TagihanPerSiswa::with(['tagihan.namaTagihan', 'transaksi','siswaPerKelas.siswa','tahunAjar','siswaPerKelas.kelas','tahunAjar','transaksi.users'])
                                     ->whereHas('tahunAjar',function($query){
                                         $query->where('aktif',true);
                                     })
@@ -212,6 +219,7 @@ class TransaksiController extends Controller
             $tahunAjar = $tagihan[0]->siswaPerKelas->tahunAjar->tahun;
             $temp = explode('/',$tahunAjar);
             $tahun = implode('-',$temp);
+            $staf = $tagihan[0]->transaksi->users->nama;
             
             
             // Inisialisasi TCPDF
@@ -238,6 +246,8 @@ class TransaksiController extends Controller
             $pdf->Cell(0, 5, 'Nama: ' . $dataNama, 0, 1, 'L');
             // $pdf->SetXY(5, 35);
             $pdf->Cell(0, 5, 'Kelas: ' . $kelas, 0, 1, 'L');
+
+            $pdf->Cell(0, 5, 'Admin: ' . $staf, 0, 1, 'L');
             
             $pdf->Cell(0, 5, '', 0, 1, 'L');
             // Tabel tagihan
@@ -275,7 +285,6 @@ class TransaksiController extends Controller
 
             $directoryPath = public_path('pdf/'.$tahun.'/'.$kelas.'/');
 
-
             // Periksa apakah direktori sudah ada
             if (!File::exists($directoryPath)) {
                 // Jika belum ada, buat direktori baru
@@ -288,7 +297,6 @@ class TransaksiController extends Controller
                 $pdf->Output($pdfPath, 'F');
             }
 
-            // $pdf->Output($nama.'.pdf', 'I');
             
             // Rubah Status
             
@@ -336,6 +344,7 @@ class TransaksiController extends Controller
             'namaTagihan' => 'required',
             'siswa' => 'required|exists:App\Models\Siswa,namaSiswa',
             'kelas' => 'required',
+            'user' => 'required',
         ];
 
         $messages = [
@@ -343,6 +352,7 @@ class TransaksiController extends Controller
             'siswa.required' => 'Siswa wajib diisi.',
             'siswa.exists' => 'Nama Siswa tidak ada di dalam Database.',
             'kelas.required' => 'Kelas wajib diisi.',
+            'user.required' => 'User wajib diisi.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

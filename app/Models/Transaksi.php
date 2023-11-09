@@ -16,7 +16,8 @@ class Transaksi extends Model
     public $fillable = [
         'invoice',
         'verify',
-        'idTPS'
+        'idTPS',
+        'idUser'
     ];
 
     public function tagihanPerSiswa()

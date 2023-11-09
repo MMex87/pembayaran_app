@@ -84,7 +84,19 @@
                             </select>
                             <div id="error-namaTagihan" class="text-danger"></div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label for="user" class="form-label">Admin User</label>
+                            <select name="user" id="user" class="form-control" required>
+                                <option value="">-- Pilih User --</option>
+                                @foreach ($users as $item)
+                                    <option
+                                        @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->transaksi->idUser == $item->idUser) @endif
+                                        value="{{ $item->idUser }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                            <div id="error-user" class="text-danger"></div>
+                        </div>
+                        <div class="col-md-6">
                             <label for="totalBayar" class="form-label">Nominal Yang Di Bayar</label>
                             <input type="text" class="form-control" id="totalBayar" name="totalBayar" disabled>
                         </div>
@@ -351,7 +363,7 @@
         <script>
             $(document).ready(function() {
                 Swal.fire({
-                    title: 'Berhasil!',
+                    title: 'Email Gagal Terkirim!',
                     text: '{{ Session::get('gagal-email') }}',
                     icon: 'error'
                 });
