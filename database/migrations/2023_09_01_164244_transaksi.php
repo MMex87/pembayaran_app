@@ -19,9 +19,13 @@ return new class extends Migration
             $table->string('verify')->nullable();
             $table->softDeletes();
 
-            // relasi ke table taginah
+            // relasi ke table tagihan
             $table->unsignedBigInteger('idTPS');
             $table->foreign('idTPS')->references('idTPS')->on('tagihan_per_siswa');
+
+            //relasi table users
+            $table->unsignedBigInteger('idUser');
+            $table->foreign('idUser')->references('idUser')->on('users');
 
             $table->timestamps();
         });

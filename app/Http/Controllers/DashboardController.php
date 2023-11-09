@@ -10,6 +10,7 @@ use App\Models\Siswa;
 use App\Models\Tagihan;
 use App\Models\TagihanPerSiswa;
 use App\Models\Transaksi;
+use App\Models\Users;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -83,6 +84,17 @@ class DashboardController extends Controller
             return $item;
         });
 
+        // data User
+        $searchUser = $request->input('searchUser');
+
+        $userQuery = Users::orderBy('idUser','DESC');
+
+        if($search){
+                $userQuery->where('nama', 'LIKE', "%$search%");
+        }
+        
+        $users = $userQuery->paginate(5);
+
         $judul = "Dashboard";
         return view('dashboard.index',[
             'tahunAjar' => $tahunAjar,
@@ -91,7 +103,8 @@ class DashboardController extends Controller
             'siswa' => $siswa,
             'tagihan' => $tagihan,
             'tps' => $tps,
-            'transaksi' =>$transaksi
+            'transaksi' =>$transaksi,
+            'users' => $users
             ])->with('judul',$judul);
     }
 

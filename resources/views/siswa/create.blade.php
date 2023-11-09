@@ -313,7 +313,7 @@
                                 error: function() {
                                     Swal.fire(
                                         'Gagal di Tambahkan!',
-                                        'Golongan ke ${namaGolongan} Gagal di Tambahkan.',
+                                        `Golongan ke ${namaGolongan} Gagal di Tambahkan.`,
                                         'error'
                                     )
                                 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\TagihanPerSiswa;
+use App\Models\Users;
 
 class Transaksi extends Model
 {
@@ -21,6 +22,11 @@ class Transaksi extends Model
     public function tagihanPerSiswa()
     {
         return $this->belongsTo(TagihanPerSiswa::class, 'idTPS');
+    }
+    
+    public function users()
+    {
+        return $this->belongsTo(Users::class, 'idUser');
     }
 
     protected $primaryKey = 'idTransaksi';

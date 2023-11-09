@@ -11,6 +11,7 @@ use App\Http\Controllers\NamaTagihanController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TagihanPerSiswaController;
 use App\Http\Controllers\GolonganController;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,3 +97,8 @@ Route::post('transaksiValidasi',[TransaksiController::class, 'validation']);
 
 // Tagihan Per Siswa
 Route::get('tagihanPerSiswa', [TagihanPerSiswaController::class, 'index']);
+
+// User
+Route::post('user',[UsersController::class, 'store']);
+Route::patch('user/{id}',[UsersController::class, 'update']);
+Route::delete('user/{id}',[UsersController::class, 'destroy']);
