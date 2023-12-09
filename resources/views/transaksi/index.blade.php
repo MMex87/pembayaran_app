@@ -59,7 +59,8 @@
                                 <option value="">-- Pilih Kelas --</option>
                                 @foreach ($kelas as $item)
                                     <option
-                                        @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->siswaPerKelas->siswa->idKelas == $item->idKelas) @endif
+                                        @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->siswaPerKelas->siswa->idKelas == $item->idKelas) @else @if (request('kelas')) @selected(request('kelas') == $item->idKelas) @endIf
+                                        @endif
                                         value="{{ $item->idKelas }}">{{ $item->namaKelas }}</option>
                                 @endforeach
                             </select>
@@ -68,7 +69,7 @@
                         <div class="col-md-6">
                             <label for="siswa" class="form-label">Siswa</label>
                             <input type="text" class="form-control" id="siswa" name="siswa" required
-                                @if ($tagihan->isNotEmpty()) value="{{ $tagihan[0]->siswaPerKelas->siswa->namaSiswa }}" @endif>
+                                @if ($tagihan->isNotEmpty()) value="{{ $tagihan[0]->siswaPerKelas->siswa->namaSiswa }}" @else value="{{ request('nama') ? request('nama') : '' }} " @endif>
                             <div id="error-siswa" class="text-danger"></div>
                         </div>
                         <div class="col-md-12">
@@ -77,7 +78,8 @@
                                 <option value="">-- Pilih Tagihan --</option>
                                 @if ($tagihan->isNotEmpty())
                                     @foreach ($daftarTagihan as $val)
-                                        <option value="{{ $val->idTagihan }}">{{ $val->tagihan->namaTagihan->namaTagihan }}
+                                        <option value="{{ $val->idTagihan }}">
+                                            {{ $val->tagihan->namaTagihan->namaTagihan }}
                                         </option>
                                     @endforeach
                                 @endif
@@ -89,8 +91,7 @@
                             <select name="user" id="user" class="form-control" required>
                                 <option value="">-- Pilih User --</option>
                                 @foreach ($users as $item)
-                                    <option
-                                        @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->transaksi->idUser == $item->idUser) @endif
+                                    <option @if ($tagihan->isNotEmpty()) @selected($tagihan[0]->transaksi->idUser == $item->idUser) @endif
                                         value="{{ $item->idUser }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
@@ -231,9 +232,15 @@
         document.getElementById("kelas").addEventListener("change", getId);
 
         $(document).ready(function() {
+            // Mengekstrak nilai parameter 'kelas' dari URL
+            var urlParams = new URLSearchParams(window.location.search);
+
             var selectedSiswa = ""; // Variabel untuk menyimpan siswa yang dipilih
             var selectedIdSiswa = "";
 
+
+            idKelas = urlParams.get('kelas');
+            selectedIdSiswa = urlParams.get('siswa')
             $("#siswa").autocomplete({
                 source: function(request, response) {
                     $.ajax({

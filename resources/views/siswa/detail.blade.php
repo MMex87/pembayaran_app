@@ -251,7 +251,10 @@
                                                                     value="/pdf/{{ $tahun }}/{{ $namaKelas }}/{{ $nama }}.pdf">Print</button>
                                                             </td>
                                                         @else
-                                                            <td><a class="btn btn-primary" href="/pembayaran">Bayar</a>
+                                                            <td><a class="btn btn-primary"
+                                                                    href="/pembayaran?nama={{ $value->siswaPerKelas->siswa->namaSiswa }}
+                                                                &kelas={{ $value->siswaPerKelas->kelas->idKelas }}
+                                                                &siswa={{ $value->siswaPerKelas->idSiswa }}">Bayar</a>
                                                             </td>
                                                         @endif
                                                     </tr>

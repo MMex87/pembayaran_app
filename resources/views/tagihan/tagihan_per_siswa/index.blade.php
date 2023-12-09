@@ -54,6 +54,7 @@
                                             @php($tempNama = explode(' ', $dataNama))
                                             @php($nama = implode('', $tempNama))
                                             @php($namaKelas = $value->siswaPerKelas->kelas->namaKelas)
+                                            @php($idKelas = $value->siswaPerKelas->kelas->idKelas)
                                             <tr data-index="{{ $index }}">
                                                 <td>{{ $index }}</td>
                                                 <td>{{ $value->siswaPerKelas->siswa->namaSiswa }}</td>
@@ -65,7 +66,10 @@
                                                             value="/pdf/{{ $tahun }}/{{ $namaKelas }}/{{ $nama }}.pdf">Print</button>
                                                     </td>
                                                 @else
-                                                    <td><a class="btn btn-primary" href="/pembayaran">Bayar</a>
+                                                    <td><a class="btn btn-primary"
+                                                            href="/pembayaran?nama={{ $value->siswaPerKelas->siswa->namaSiswa }}
+                                                                &kelas={{ $value->siswaPerKelas->kelas->idKelas }}
+                                                                &siswa={{ $value->siswaPerKelas->idSiswa }}">Bayar</a>
                                                     </td>
                                                 @endif
                                             </tr>

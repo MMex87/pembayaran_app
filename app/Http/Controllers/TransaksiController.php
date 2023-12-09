@@ -46,7 +46,8 @@ class TransaksiController extends Controller
                                         ->get();
 
         // dd($tagihan);
-                                        
+        
+        // dd($tagihan);
         if($tagihan->isNotEmpty()){
             $tahunAjar = $tagihan[0]->tahunAjar->tahun;
             $temp = explode('/',$tahunAjar);
@@ -63,7 +64,6 @@ class TransaksiController extends Controller
             $invoice = 'INV'.$date;
             $daftarTagihan = '';
         }
-
         $user = Users::orderBy('idUser','DESC')->get();
 
         $view_data=[
@@ -100,7 +100,7 @@ class TransaksiController extends Controller
         $idKelas = $request->input('kelas');
         $namaSiswa = $request->input('siswa');
         $idTagihan = $request->input('namaTagihan');
-        $idUser = $request->input('namaTagihan');
+        $idUser = $request->input('user');
         
         $siswa = Siswa::with('siswaPerKelas.tahunAjar')
                         ->whereHas('siswaPerKelas.tahunAjar',function($query){
