@@ -13,19 +13,19 @@ class GolonganController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request )
+    public function index(Request $request)
     {
         $search = $request->input('search');
-        if($search){
-            $golongan = Golongan::where('namaGolongan' , 'LIKE' , "%$search%")->paginate(2);
-        }else{
+        if ($search) {
+            $golongan = Golongan::where('namaGolongan', 'LIKE', "%$search%")->paginate(2);
+        } else {
             $golongan = Golongan::paginate(2);
         }
 
-        $data_view= [
+        $data_view = [
             'golongan' => $golongan
         ];
-        return view('siswa.golongan.index',$data_view)->with('judul','Siswa');
+        return view('siswa.golongan.index', $data_view)->with('judul', 'Siswa');
     }
 
     /**
@@ -35,7 +35,7 @@ class GolonganController extends Controller
      */
     public function create()
     {
-        return view('siswa.golongan.create')->with('judul','Siswa');
+        return view('siswa.golongan.create')->with('judul', 'Siswa');
     }
 
     /**
@@ -52,7 +52,7 @@ class GolonganController extends Controller
             'namaGolongan' => $namaGolongan
         ]);
 
-        return redirect('golongan');
+        return redirect('siswa');
     }
 
     /**
@@ -74,7 +74,7 @@ class GolonganController extends Controller
      */
     public function edit($id)
     {
-        
+
     }
 
     /**
@@ -88,9 +88,9 @@ class GolonganController extends Controller
     {
         $namaGolongan = $request->input('namaGolongan');
 
-        Golongan::where('idGolongan',$id)->update([
+        Golongan::where('idGolongan', $id)->update([
             'namaGolongan' => $namaGolongan
-        ]); 
+        ]);
 
         return redirect('golongan');
     }
@@ -103,7 +103,7 @@ class GolonganController extends Controller
      */
     public function destroy($id)
     {
-        Golongan::where('idGolongan',$id)->delete();
+        Golongan::where('idGolongan', $id)->delete();
 
         return redirect('golongan');
     }
@@ -130,7 +130,7 @@ class GolonganController extends Controller
     }
     public function getGolongan()
     {
-        $golongan = Golongan::orderBy('idGolongan','desc')->first();
+        $golongan = Golongan::orderBy('idGolongan', 'desc')->first();
 
         return json_encode($golongan);
     }
